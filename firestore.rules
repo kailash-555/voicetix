@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore { match /databases/{db}/documents {
+  match /movies/{d} { allow read: if true; allow write: if false; }
+  match /theatres/{d} { allow read: if true; allow write: if false; }
+  match /shows/{d} { allow read: if true; allow write: if false; }
+  match /users/{u} { allow read, update: if request.auth.uid == u; allow create: if request.auth.uid == u; }
+  match /bookings/{b} { allow read: if request.auth.uid == resource.data.userId; allow write: if false; }
+  match /{c=**} { allow read, write: if false; } // seats, payments: server (Admin SDK) only
+}}

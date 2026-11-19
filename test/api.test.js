@@ -1,0 +1,15 @@
+const test=require('node:test'),assert=require('assert'),app=require('../server');let srv,base;
+test.before(()=>new Promise(r=>{srv=app.listen(0,'127.0.0.1',()=>{base='http://127.0.0.1:'+srv.address().port;r()})}));test.after(()=>srv.close());
+const call=async(p,tok,body)=>{const r=await fetch(base+p,{method:body?'POST':'GET',headers:{'content-type':'application/json',authorization:'Bearer '+tok},body:body&&JSON.stringify(body)});return{s:r.status,b:await r.json()}};
+const cust={name:'A',email:'a@b.co',phone:'9876543210'};
+test('concurrent hold: exactly one user wins',async()=>{const sid=(await call('/api/shows','x')).b[0].showId;
+ const rs=await Promise.all(['demo-u1','demo-u2','demo-u3'].map(u=>call(`/api/shows/${sid}/hold`,u,{seats:['C3']})));
+ assert.deepStrictEqual(rs.map(r=>r.s).sort(),[200,409,409])});
+test('full flow: not paid until verified; server price; duplicate blocked',async()=>{const sid=(await call('/api/shows','x')).b[1].showId;
+ const h=(await call(`/api/shows/${sid}/hold`,'demo-f',{seats:['A1','D2']})).b;
+ const b=(await call('/api/bookings','demo-f',{holdId:h.holdId,customer:cust,totalAmount:1})).b;assert.strictEqual(b.totalAmount,Math.round(400+40+Math.round(40*.18)));assert.strictEqual(b.paymentStatus,'UNPAID');
+ assert.strictEqual((await call('/api/bookings','demo-f',{holdId:h.holdId,customer:cust})).s,409);
+ const p=(await call('/api/payments/initiate','demo-f',{bookingId:b.bookingId})).b;assert.strictEqual((await call('/api/bookings/'+b.bookingId,'demo-f')).b.paymentStatus,'UNPAID');
+ const done=(await call(`/api/demo-gateway/${p.paymentId}/complete`,'demo-f',{approve:true})).b;assert.strictEqual(done.booking.bookingStatus,'CONFIRMED');assert.ok(done.booking.ticket.qrPayload)});
+test('coupon applies on server',async()=>{const sid=(await call('/api/shows','x')).b[2].showId;const h=(await call(`/api/shows/${sid}/hold`,'demo-c',{seats:['A1','A2']})).b;const b=(await call('/api/bookings','demo-c',{holdId:h.holdId,customer:cust,coupon:'VOICE10'})).b;assert.strictEqual(b.totalAmount,300-30+30+5)});
+test('access control',async()=>{assert.strictEqual((await call('/api/admin/stats','demo-u1')).s,403);assert.strictEqual((await call('/api/admin/stats','demo-admin')).s,200);assert.strictEqual((await call('/api/bookings/me','')).s,401)});

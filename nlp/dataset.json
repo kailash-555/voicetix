@@ -1,0 +1,95 @@
+[
+ {
+  "text": "Book two tickets for Jailer",
+  "intent": "SelectMovie",
+  "entities": {
+   "movie": "Jailer 2",
+   "qty": 2
+  }
+ },
+ {
+  "text": "I need two tickets for Jailer",
+  "intent": "SelectMovie",
+  "entities": {
+   "movie": "Jailer 2",
+   "qty": 2
+  }
+ },
+ {
+  "text": "Show me Jailer movie shows",
+  "intent": "SelectMovie",
+  "entities": {
+   "movie": "Jailer 2"
+  }
+ },
+ {
+  "text": "Book three tickets for Jailer tomorrow at 6 PM",
+  "intent": "SelectMovie",
+  "entities": {
+   "movie": "Jailer 2",
+   "qty": 3,
+   "date": 1,
+   "time": "06:00 PM"
+  }
+ },
+ {
+  "text": "Choose the 7 PM show at City Cinemas",
+  "intent": "SelectShowtime",
+  "entities": {
+   "time": "07:00 PM",
+   "theatre": "City Cinemas"
+  }
+ },
+ {
+  "text": "Select two premium seats",
+  "intent": "SelectSeats",
+  "entities": {
+   "qty": 2,
+   "category": "Premium"
+  }
+ },
+ {
+  "text": "Choose seats A5 and A6",
+  "intent": "SelectSeats",
+  "entities": {
+   "seats": [
+    "A5",
+    "A6"
+   ]
+  }
+ },
+ {
+  "text": "Remove seat A5",
+  "intent": "RemoveSeat",
+  "entities": {
+   "seats": [
+    "A5"
+   ]
+  }
+ },
+ {
+  "text": "Confirm",
+  "intent": "Confirm",
+  "entities": {}
+ },
+ {
+  "text": "Proceed to payment",
+  "intent": "ProceedToPayment",
+  "entities": {}
+ },
+ {
+  "text": "Go back",
+  "intent": "GoBack",
+  "entities": {}
+ },
+ {
+  "text": "Cancel my booking",
+  "intent": "CancelBooking",
+  "entities": {}
+ },
+ {
+  "text": "Help",
+  "intent": "Help",
+  "entities": {}
+ }
+]

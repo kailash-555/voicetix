@@ -1,0 +1,32 @@
+// Rule-based NLU (NOT a trained ML model): normalize -> intent rules -> entity extraction.
+const MOVIES=[['Jailer 2','jailer'],['Drishyam 3','drishyam'],['Ranabaali'],['Prahaar'],['Baththa'],['Tom and Jerry Forbidden Compass','tom and jerry'],['Street Fighter']],THEATRES=['City Cinemas','Galaxy Multiplex','Starlight Screens'];
+const NUM={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10};
+const norm=t=>t.toLowerCase().replace(/[.,!?']/g,'').replace(/\b([ap])\s?m\b/g,'$1m').replace(/\s+/g,' ').trim();
+function parse(raw){const t=norm(raw),e={},has=r=>r.test(t);
+ const m=MOVIES.find(x=>x.some(n=>new RegExp('\\b'+n.toLowerCase()+'\\b').test(t)));if(m)e.movie=m[0];
+ const th=THEATRES.find(x=>t.includes(x.toLowerCase()));if(th)e.theatre=th;
+ const tm=t.match(/(\d{1,2})(?::(\d{2}))?\s?(am|pm)/);if(tm)e.time=`${tm[1].padStart(2,'0')}:${tm[2]||'00'} ${tm[3].toUpperCase()}`;
+ if(/day after/.test(t))e.date=2;else if(/tomorrow/.test(t))e.date=1;else if(/today/.test(t))e.date=0;
+ const q=t.match(/(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:(?:premium|regular|recliner)\s+)?(?:tickets?|seats?)/);if(q)e.qty=NUM[q[1]]||+q[1];
+ const c=t.match(/premium|regular|recliner/);if(c)e.category=c[0][0].toUpperCase()+c[0].slice(1);
+ const sn=[...t.matchAll(/\b([a-f])\s?([1-8])\b(?!\s?[ap]m)/g)].map(x=>x[1].toUpperCase()+x[2]);if(sn.length)e.seats=sn;
+ let i='Unknown';
+ if(has(/\b(help|what can you do)\b/))i='Help';
+ else if(has(/\b(go back|back|previous)\b/)||has(/change the theatre/))i='GoBack';
+ else if(has(/\bcancel\b/))i='CancelBooking';
+ else if(has(/\b(my bookings?|booking list|my tickets?|view bookings?|show bookings?|check bookings?|past bookings?|all bookings?)\b/))i='ViewMyBookings';
+ else if(has(/\b(pay|payment|checkout|pay now|move to payment|buy tickets?|proceed to payment)\b/))i='ProceedToPayment';
+ else if(has(/\b(remove|deselect|unselect)\b/))i='RemoveSeat';
+ else if(has(/\b(summary|review|read)\b|booking details/))i='ReviewBooking';
+ else if(e.seats||has(/\b(select|choose|pick)\b.*\bseats?\b/)||(e.qty&&e.category)||has(/available seats/))i='SelectSeats';
+ else if(e.movie&&has(/\b(details|about)\b/))i='ViewMovieDetails';
+ else if(e.movie||has(/\b(book|tickets?)\b/)&&!has(/\b(theatre|show)/))i='SelectMovie';
+ else if(has(/\b(confirm|yes|okay|ok|proceed|continue|sure)\b/))i='Confirm';
+ else if(e.time||has(/select|choose/)&&e.theatre)i='SelectShowtime';
+ else if(e.theatre)i='SelectTheatre';
+ else if(e.date!=null)i='SelectDate';
+ else if(has(/\b(theatres?|near me)\b/))i='FindTheatre';
+ else if(has(/\b(shows?|showtimes?)\b/))i='ViewShowtimes';
+ else if(has(/\b(find|search|look for)\b/))i='SearchMovie';
+ return{i,e,t}}
+module.exports={parse,norm};

@@ -1,0 +1,3740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VoiceTix AI – Next-Gen Voice Cinema Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070913;
+  --bg-gradient: radial-gradient(circle at 85% -15%, rgba(124, 58, 237, 0.22) 0%, transparent 55%),
+                      radial-gradient(circle at 10% 20%, rgba(225, 29, 72, 0.18) 0%, transparent 45%),
+                      #070913;
+  --card-bg: rgba(18, 24, 43, 0.75);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-hover: rgba(26, 34, 62, 0.9);
+  --ac: #f43f5e;
+  --ac-glow: rgba(244, 63, 94, 0.35);
+  --ac-hover: #e11d48;
+  --violet: #8b5cf6;
+  --tx: #f8fafc;
+  --mu: #94a3b8;
+  --ok: #10b981;
+  --ok-glow: rgba(16, 185, 129, 0.3);
+  --sel: #3b82f6;
+  --sel-glow: rgba(59, 130, 246, 0.4);
+  --booked: #334155;
+  --gold: #f59e0b;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  margin: 0;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--tx);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+  padding-bottom: 120px;
+}
+input, button, select, textarea { font-family: inherit; }
+
+/* Navbar */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(7, 9, 19, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--ac), var(--violet));
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  box-shadow: 0 4px 14px var(--ac-glow);
+}
+.brand span {
+  background: linear-gradient(90deg, #ffffff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(244, 63, 94, 0.2);
+  color: var(--ac);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  text-transform: uppercase;
+  margin-left: 4px;
+}
+.search-bar {
+  flex: 1;
+  min-width: 180px;
+  max-width: 380px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-bar input {
+  width: 100%;
+  padding: 9px 14px 9px 38px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 99px;
+  color: #fff;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.search-bar input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--ac);
+  box-shadow: 0 0 0 3px var(--ac-glow);
+}
+.search-bar .icon {
+  position: absolute;
+  left: 14px;
+  font-size: 14px;
+  color: var(--mu);
+  pointer-events: none;
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-border);
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.pill-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  color: #fff;
+}
+.pill-btn.active {
+  background: linear-gradient(135deg, var(--ac), #be123c);
+  border-color: transparent;
+  box-shadow: 0 4px 14px var(--ac-glow);
+  color: #fff;
+}
+.badge-count {
+  background: #fff;
+  color: var(--ac);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 99px;
+}
+
+/* Layout */
+main {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+/* Alerts & Notices */
+.demo-banner {
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.04));
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #fde68a;
+  margin-bottom: 20px;
+}
+.demo-banner .badge {
+  background: var(--gold);
+  color: #000;
+  font-weight: 800;
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Step Bar */
+.step-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mu);
+  white-space: nowrap;
+}
+.step-item.active {
+  background: linear-gradient(135deg, var(--ac), #be123c);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px var(--ac-glow);
+}
+.step-item.done {
+  color: #cbd5e1;
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+/* Hero Showcase */
+.hero {
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #311029 50%, #4c0519 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 260px;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 85% 30%, rgba(244, 63, 94, 0.35), transparent 60%);
+  pointer-events: none;
+}
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #fecdd3;
+  width: fit-content;
+  margin-bottom: 12px;
+}
+.hero h1 {
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+.hero p {
+  color: #cbd5e1;
+  max-width: 580px;
+  font-size: 15px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  z-index: 2;
+}
+.hero-bg-emoji {
+  position: absolute;
+  right: 28px;
+  bottom: -20px;
+  font-size: 160px;
+  opacity: 0.28;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+  pointer-events: none;
+  user-select: none;
+  transition: transform 0.4s;
+}
+.hero:hover .hero-bg-emoji {
+  transform: scale(1.05) rotate(3deg);
+}
+
+/* Category Filter Chips */
+.chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.chip {
+  padding: 8px 16px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  color: var(--mu);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.chip.active {
+  background: var(--ac);
+  color: #fff;
+  border-color: var(--ac);
+  box-shadow: 0 4px 12px var(--ac-glow);
+}
+
+/* Cards & Grid */
+.section-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 20px;
+  margin-bottom: 36px;
+}
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.movie-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(244, 63, 94, 0.4);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(244, 63, 94, 0.15);
+  background: var(--card-hover);
+}
+.poster {
+  height: 200px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  font-size: 72px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+}
+.poster-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fbbf24;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.poster-lang {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+.movie-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.movie-sub {
+  font-size: 12px;
+  color: var(--mu);
+  margin-bottom: 12px;
+}
+.movie-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--ac), #be123c);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--ac-glow);
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--card-border);
+  color: #e2e8f0;
+}
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--ok-glow);
+}
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+}
+
+/* Detail View */
+.detail-header {
+  display: flex;
+  gap: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.detail-poster {
+  width: 140px;
+  height: 180px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  font-size: 64px;
+  flex-shrink: 0;
+}
+.detail-info {
+  flex: 1;
+  min-width: 240px;
+}
+.theatre-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.theatre-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.theatre-times {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.time-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.time-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.time-btn.active {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #fff;
+  box-shadow: 0 4px 12px var(--ac-glow);
+}
+
+/* Cinema Seating Experience */
+.seating-wrap {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 28px 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.screen-container {
+  perspective: 400px;
+  margin: 10px auto 36px;
+  width: 80%;
+  max-width: 540px;
+}
+.screen-3d {
+  height: 12px;
+  background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.1));
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.35);
+  transform: rotateX(-15deg);
+}
+.screen-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mu);
+  margin-top: 10px;
+}
+.seating-hall {
+  overflow-x: auto;
+  padding: 10px 0;
+  display: inline-block;
+}
+.tier-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--mu);
+  margin: 16px 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.tier-label::before, .tier-label::after {
+  content: '';
+  height: 1px;
+  width: 40px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.seat-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.row-id {
+  width: 22px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mu);
+  text-align: right;
+  margin-right: 6px;
+}
+.seat {
+  width: 36px;
+  height: 32px;
+  border-radius: 8px 8px 3px 3px;
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  background: #10b981;
+  color: #064e3b;
+  position: relative;
+}
+.seat:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 4px 10px var(--ok-glow);
+}
+.seat.s {
+  background: #3b82f6;
+  color: #fff;
+  box-shadow: 0 0 14px var(--sel-glow);
+  transform: translateY(-2px);
+}
+.seat.b {
+  background: var(--booked);
+  color: #64748b;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.seat-legend {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--mu);
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+/* Floating Checkout Sticky Bar */
+.checkout-bar {
+  position: sticky;
+  bottom: 16px;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  flex-wrap: wrap;
+}
+.hold-timer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* Form inputs */
+.input-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mu);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.f-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 14px;
+  transition: border-color 0.2s;
+}
+.f-input:focus {
+  outline: none;
+  border-color: var(--ac);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Bill breakdown */
+.bill-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-size: 13px;
+  margin: 14px 0;
+}
+.bill-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: #cbd5e1;
+}
+.bill-total {
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+  margin-top: 8px;
+  padding-top: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* Payment Selector */
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pm-card {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s;
+}
+.pm-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.pm-card.active {
+  border-color: var(--ac);
+  background: rgba(244, 63, 94, 0.1);
+  box-shadow: 0 0 16px var(--ac-glow);
+}
+
+/* Digital Ticket */
+.ticket-wrapper {
+  max-width: 680px;
+  margin: 24px auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7);
+  display: flex;
+  background: #ffffff;
+  color: #0f172a;
+}
+@media (max-width: 640px) {
+  .ticket-wrapper { flex-direction: column; }
+}
+.ticket-main {
+  flex: 1;
+  padding: 24px;
+}
+.ticket-stub {
+  width: 220px;
+  background: #f8fafc;
+  border-left: 2px dashed #cbd5e1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+@media (max-width: 640px) {
+  .ticket-stub { width: 100%; border-left: none; border-top: 2px dashed #cbd5e1; }
+}
+.ticket-header-strip {
+  background: linear-gradient(135deg, var(--ac), var(--violet));
+  margin: -24px -24px 20px;
+  padding: 16px 24px;
+  color: #fff;
+}
+.ticket-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+.t-field dt {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.t-field dd {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* My Bookings List */
+.mine-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 10px;
+}
+.booking-item-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  transition: all 0.2s;
+}
+.booking-item-card:hover {
+  background: var(--card-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.status-tag.confirmed {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.status-tag.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.status-tag.cancelled {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Floating AI Voice Assistant Panel */
+#voice-dock {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#voice-dock.dock-left {
+  right: auto;
+  left: 20px;
+  align-items: flex-start;
+}
+#voice-panel {
+  width: min(380px, calc(100vw - 32px));
+  background: rgba(13, 19, 44, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 20px rgba(244, 63, 94, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform-origin: bottom right;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+#voice-dock.dock-left #voice-panel {
+  transform-origin: bottom left;
+}
+#voice-panel.minimized {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.85) translateY(20px);
+  display: none;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 10px;
+}
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+.panel-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+.mini-dock-pill {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 99px;
+  background: rgba(13, 19, 44, 0.92);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s;
+}
+.mini-dock-pill:hover {
+  background: rgba(26, 34, 62, 0.98);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(244, 63, 94, 0.3);
+}
+#voice-dock.is-minimized #voice-panel {
+  display: none !important;
+}
+#voice-dock.is-minimized .mini-dock-pill {
+  display: inline-flex;
+}
+.panel-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 16px;
+}
+.wave-bar {
+  width: 3px;
+  height: 6px;
+  background: var(--ac);
+  border-radius: 99px;
+  transition: height 0.1s;
+}
+.wave-active .wave-bar:nth-child(1) { animation: wave 0.6s infinite ease-in-out; }
+.wave-active .wave-bar:nth-child(2) { animation: wave 0.8s infinite ease-in-out 0.1s; }
+.wave-active .wave-bar:nth-child(3) { animation: wave 0.5s infinite ease-in-out 0.2s; }
+.wave-active .wave-bar:nth-child(4) { animation: wave 0.7s infinite ease-in-out 0.15s; }
+@keyframes wave {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+#chat-history {
+  max-height: 190px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+.msg {
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  max-width: 90%;
+  word-break: break-word;
+}
+.msg.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+.msg.agent {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  border-bottom-left-radius: 2px;
+}
+.msg-nlp {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #94a3b8;
+  margin-top: 2px;
+}
+.voice-hints {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 2px 6px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+.voice-hints::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.hint-chip {
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-border);
+  color: #cbd5e1;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.hint-chip:hover {
+  background: rgba(244, 63, 94, 0.2);
+  border-color: var(--ac);
+  color: #fff;
+}
+.voice-input-row {
+  display: flex;
+  gap: 6px;
+}
+.voice-input-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--card-border);
+  color: #fff;
+  font-size: 13px;
+}
+.voice-input-row input:focus {
+  outline: none;
+  border-color: var(--ac);
+}
+
+/* Mic Floating Action Button */
+.mic-fab-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto !important;
+}
+#mic-fab {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ac), #be123c);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer !important;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 25px var(--ac-glow);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  pointer-events: auto !important;
+  user-select: none;
+  z-index: 1000;
+}
+#mic-fab:hover {
+  transform: scale(1.08);
+}
+#mic-fab.listening {
+  background: linear-gradient(135deg, #ef4444, #991b1b);
+  animation: micPulse 1.2s infinite;
+}
+@keyframes micPulse {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-box {
+  background: #0f162e;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  max-width: 480px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+}
+
+/* Print styling */
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  nav, #voice-dock, .step-bar, .demo-banner, .btn { display: none !important; }
+  .ticket-wrapper { box-shadow: none !important; border: 1px solid #999; margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<nav>
+  <div class="brand" onclick="go('home')">
+    <div class="brand-icon">🎬</div>
+    <span>VoiceTix</span>
+    <span class="brand-tag">AI Cinema</span>
+  </div>
+  <div class="search-bar">
+    <span class="icon">🔍</span>
+    <input id="q" placeholder="Search movies, genres, language..." oninput="S.q=this.value;render()">
+  </div>
+  <div class="nav-actions" id="nv"></div>
+</nav>
+
+<!-- Main Application Workspace -->
+<main id="app"></main>
+
+<!-- Floating Voice Assistant Widget -->
+<div id="voice-dock">
+  <div id="voice-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span id="panel-state-icon">🤖</span>
+        <span>VoiceTix Assistant</span>
+        <div class="panel-wave" id="dock-wave">
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+        </div>
+      </div>
+      <div class="panel-tools">
+        <button class="pill-btn" id="mic-status-pill" style="padding:4px 8px;font-size:11px" onclick="reconnectEarphoneMic(true)" title="Click to refresh or connect earphone mic">🎙️ Mic: Auto</button>
+        <button class="pill-btn" id="mic-lang-btn" style="padding:4px 6px;font-size:11px" onclick="toggleMicLang()" title="Switch recognition language (en-IN / en-US / en-GB)">en-IN</button>
+        <button class="pill-btn" id="hf-btn" style="padding:4px 8px;font-size:11px" onclick="toggleHandsFree()">🎧 Hands-free: Off</button>
+        <button class="pill-btn" style="padding:4px 8px;font-size:11px" onclick="openMicModal()">⚙️ Setup</button>
+        <button class="icon-btn" onclick="toggleDockSide()" title="Move assistant to Left/Right corner">⇄</button>
+        <button class="icon-btn" onclick="toggleDockMinimize()" title="Minimize assistant so you can access this space">─</button>
+      </div>
+    </div>
+    <div id="chat-history"></div>
+    <div class="voice-hints" id="voice-hints-bar"></div>
+    <div style="font-size:11px;color:var(--mu);min-height:16px" id="voice-live-transcript">Tap 🎤 or say “Help”</div>
+    <div class="voice-input-row">
+      <input id="txt-cmd" placeholder="Type a command or speak..." onkeydown="if(event.key==='Enter')typedCmd()">
+      <button class="pill-btn" onclick="toggleListening()" title="Start Microphone" style="padding:8px 12px;font-size:14px">🎤</button>
+      <button class="btn btn-primary" style="padding:8px 14px" onclick="typedCmd()">Send</button>
+    </div>
+  </div>
+
+  <div class="mic-fab-wrap">
+    <div class="mini-dock-pill" onclick="toggleDockMinimize()" title="Click to expand assistant">
+      <span>🤖 Voice Assistant</span>
+      <span style="font-size:10px;opacity:0.7">▲ Expand</span>
+    </div>
+    <button id="mic-fab" onclick="handleFabClick(event)" title="Click to speak">🎤</button>
+  </div>
+</div>
+
+<!-- Mic Calibration & Troubleshooting Modal -->
+<div id="mic-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:18px;display:flex;align-items:center;gap:8px">🎙 Microphone Setup</h3>
+      <button class="pill-btn" onclick="closeMicModal()">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--mu);margin-bottom:14px">
+      Select your audio device and speak. The volume meter responds when sound is detected.
+    </p>
+    <label class="input-label">Audio Input Device</label>
+    <select id="mic-dev-select" class="f-input" onchange="startMicMeter()"></select>
+
+    <div style="margin:10px 0 14px;display:flex;gap:8px">
+      <button class="btn btn-secondary" style="flex:1;padding:8px 12px;font-size:12px;display:flex;align-items:center;justify-content:center;gap:6px" onclick="reconnectEarphoneMic(true)">
+        🎧 Reconnect & Test Earphone Mic
+      </button>
+    </div>
+    
+    <label class="input-label">Live Input Volume</label>
+    <div style="height:14px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-bottom:8px">
+      <div id="meter-fill" style="height:100%;width:0%;background:linear-gradient(90deg, #10b981, #f59e0b);transition:width 0.05s"></div>
+    </div>
+    <div id="meter-info" style="font-size:12px;color:var(--mu);margin-bottom:14px">Speak into your mic to test level...</div>
+
+    <div style="background:rgba(255,255,255,0.04);border-radius:var(--radius-sm);padding:12px;font-size:12px;color:var(--mu);margin-bottom:16px;line-height:1.5">
+      <b>💡 Earphone & Microphone Tips:</b><br>
+      • <b>Auto-Switch:</b> Connecting wired or Bluetooth earphones automatically routes your voice input.<br>
+      • <b>Earphone Mic:</b> If Windows asks <i>"Which device did you plug in?"</i>, choose <b>Headset</b> (with microphone).<br>
+      • In Windows <i>Settings &gt; System &gt; Sound &gt; Input</i>, make sure your headset/earphone is selected as the default input device.<br>
+      • Always ensure microphone permission is <b>Allowed</b> in your browser URL bar.
+    </div>
+
+    <div style="display:flex;justify-content:space-between;gap:10px">
+      <button class="btn btn-secondary" onclick="runMicDiagnostics()">🔍 Run Diagnostics</button>
+      <button class="btn btn-primary" onclick="closeMicModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Digital Ticket Preview Modal -->
+<div id="ticket-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:720px;padding:16px;background:transparent;border:none">
+    <div style="text-align:right;margin-bottom:8px">
+      <button class="pill-btn" onclick="closeTicketModal()">✕ Close</button>
+    </div>
+    <div id="modal-ticket-target"></div>
+  </div>
+</div>
+
+<!-- Contact Details Modal (phone / email required before payment) -->
+<div id="contact-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:18px;display:flex;align-items:center;gap:8px">📲 Enter Mobile Number for WhatsApp OTP & Ticket</h3>
+      <button class="pill-btn" onclick="closeContactModal()">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--mu);margin-bottom:16px">
+      Every new seat booking requires entering your mobile number freshly. Your 6-digit payment security OTP and official admission ticket will be sent directly to your phone via WhatsApp.
+    </p>
+    <label class="input-label">📱 10-Digit Mobile Number *</label>
+    <input class="f-input" id="cm-phone" placeholder="e.g. 9876543210" type="tel" maxlength="13" onkeydown="if(event.key==='Enter')saveContact()">
+    <label class="input-label" style="margin-top:10px">📧 Email Address (Optional)</label>
+    <input class="f-input" id="cm-email" placeholder="e.g. you@example.com" type="email" onkeydown="if(event.key==='Enter')saveContact()">
+    <p style="font-size:11px;color:#25D366;margin:10px 0 0">
+      💬 A 6-digit OTP will arrive on your phone's WhatsApp before payment, followed by your ticket pass.
+    </p>
+    <div style="display:flex;justify-content:space-between;margin-top:16px;gap:10px">
+      <button class="btn btn-secondary" onclick="closeContactModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveContact()">💳 Confirm & Continue to Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Terms & Conditions Modal -->
+<div id="terms-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:540px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid var(--card-border);padding-bottom:10px">
+      <h3 style="font-size:18px;display:flex;align-items:center;gap:8px">📜 Booking Terms & Conditions</h3>
+      <button class="pill-btn" onclick="closeTermsModal()">✕</button>
+    </div>
+    <div style="max-height:340px;overflow-y:auto;font-size:13px;color:#cbd5e1;line-height:1.6;padding-right:6px">
+      <p style="margin-bottom:10px"><b>1. Admission & Digital Pass:</b> All cinema attendees must present their digital QR pass at the entrance turnstile. Admission is strictly valid for the booked movie, cinema hall, date, and allocated seats.</p>
+      <p style="margin-bottom:10px"><b>2. Convenience Fees & GST:</b> A non-refundable digital platform convenience fee of 10% plus 18% GST on the fee is applicable to all cinema seat reservations.</p>
+      <p style="margin-bottom:10px"><b>3. WhatsApp & 2-Factor OTP Verification:</b> For payment security and fraud prevention, a 6-digit OTP is dispatched via WhatsApp to your registered mobile number prior to final payment verification.</p>
+      <p style="margin-bottom:10px"><b>4. Cancellation & Refunds:</b> Cancellation is permitted up to 2 hours prior to scheduled showtime directly from "My Bookings". Refunds are processed back to the original payment method within 24–48 hours.</p>
+      <p style="margin-bottom:10px"><b>5. WhatsApp Ticket Delivery Consent:</b> By proceeding, you consent to receive security OTPs and confirmed cinema admission tickets with QR passes on your mobile number via WhatsApp.</p>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;border-top:1px solid var(--card-border);padding-top:14px">
+      <button class="btn btn-secondary" onclick="closeTermsModal()">Close</button>
+      <button class="btn btn-primary" onclick="acceptTermsAndClose()">✓ I Accept Terms</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   VoiceTix Core Engine & UI State
+   ========================================================================== */
+
+const MOVIES = [
+  { t: 'Jailer 2', a: 'jailer', g: 'Action / Crime', l: 'Tamil', r: '9.2', d: 'Released Oct 15', dur: '2h 45m', e: '🐅', c: '#7c2d12', s: 'Rajinikanth returns as Tiger Muthuvel Pandian in Nelson Dilipkumar’s high-octane action thriller sequel.' },
+  { t: 'Drishyam 3', a: 'drishyam', g: 'Mystery / Thriller', l: 'Hindi', r: '9.0', d: 'Released Oct 2', dur: '2h 35m', e: '🔍', c: '#1e3a5f', s: 'Ajay Devgn reprises his role as Vijay Salgaonkar in the gripping third chapter of the thriller franchise.' },
+  { t: 'Ranabaali', g: 'Action / Drama', l: 'Telugu', r: '8.7', d: 'Released Oct 16', dur: '2h 40m', e: '⚔️', c: '#5b1130', s: 'Vijay Deverakonda and Rashmika Mandanna star in an epic historical action spectacle.' },
+  { t: 'Prahaar', g: 'Action / Military', l: 'Hindi', r: '8.5', d: 'Released Oct 16', dur: '2h 20m', e: '💥', c: '#3b0764', s: 'Rajkummar Rao stars in an intense patriotic counter-terror military thriller.' },
+  { t: 'Baththa', g: 'Crime / Drama', l: 'Tamil', r: '8.6', d: 'Released Oct 1', dur: '2h 25m', e: '🎭', c: '#14532d', s: 'Vijay Sethupathi leads an intense underworld crime drama set in coastal Tamil Nadu.' },
+  { t: 'Tom and Jerry Forbidden Compass', a: 'tom and jerry', g: 'Animation / Comedy', l: 'English', r: '8.4', d: 'Released Oct 23', dur: '1h 35m', e: '🐭', c: '#0e4d6b', s: 'The beloved cat-and-mouse duo embark on a wild mythical treasure hunt adventure across mystical lands.' },
+  { t: 'Street Fighter', g: 'Action / Martial Arts', l: 'English', r: '8.8', d: 'Released Oct 16', dur: '2h 10m', e: '🥊', c: '#78350f', s: 'Live-action tournament martial arts film based on Capcom’s legendary combat franchise.' }
+];
+
+const THEATRES = ['City Cinemas', 'Galaxy Multiplex', 'Starlight Screens'];
+const TIMES = ['10:30 AM', '02:00 PM', '06:30 PM', '07:00 PM', '09:45 PM'];
+const ROWS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const COLS = 8;
+const PRICE = { Regular: 150, Premium: 250, Recliner: 400 };
+const cat = r => ('AB'.includes(r) ? 'Regular' : 'CD'.includes(r) ? 'Premium' : 'Recliner');
+const NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+
+// Storage keys
+const STORAGE_TOKEN_KEY = 'voicetix_auth_token';
+const STORAGE_USER_KEY = 'voicetix_auth_user';
+const STORAGE_LOCAL_BK_KEY = 'voicetix_local_bookings';
+
+// Restore saved session
+let TOK = localStorage.getItem(STORAGE_TOKEN_KEY) || null;
+let savedUser = null;
+try { savedUser = JSON.parse(localStorage.getItem(STORAGE_USER_KEY)); } catch(e){}
+
+let S = {
+  view: 'home',
+  q: '',
+  genre: 'All',
+  movie: null,
+  th: null,
+  date: 0,
+  time: null,
+  sel: [],
+  hold: 0,
+  pending: null,
+  qty: null,
+  coupon: false,
+  pm: 'UPI (GPay / PhonePe)',
+  failDemo: false,
+  form: { name: savedUser?.name || '', email: '', phone: '' },
+  user: savedUser || null,
+  bk: null,
+  status: '',
+  mine: [],
+  mineTab: 'ALL',
+  sm: null,
+  hid: null,
+  srvB: null,
+  termsAccepted: false,
+  qrSvg: null,
+  approvalUrl: null,
+  pollTimer: null
+};
+
+let API = false;
+const $ = id => document.getElementById(id);
+const mv = () => MOVIES.find(m => m.t === S.movie);
+const dl = o => o === 0 ? 'Today' : o === 1 ? 'Tomorrow' : new Date(Date.now() + o * 864e5).toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+const hash = s => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+const seatStatus = id => {
+  if (S.sel.includes(id)) return 's';
+  if (S.sm && S.sm[id]) return S.sm[id] === 'AVAILABLE' ? 'free' : 'b';
+  return (hash(S.movie + S.th + S.date + S.time + id) % 5 === 0) ? 'b' : 'free';
+};
+
+const price = id => PRICE[cat(id[0])];
+const sub = () => S.sel.reduce((a, x) => a + price(x), 0);
+const fee = () => Math.round(sub() * 0.1);
+const gst = () => Math.round(fee() * 0.18);
+const disc = () => S.coupon ? Math.round(sub() * 0.1) : 0;
+const total = () => sub() - disc() + fee() + gst();
+
+const STEPS = ['home', 'details', 'seats', 'book', 'pay', 'done'];
+const STEP_LABELS = ['Select Movie', 'Cinema & Time', 'Choose Seats', 'Review', 'Payment', 'Ticket'];
+
+/* ==========================================================================
+   Rule-Based NLP Parser
+   ========================================================================== */
+
+function norm(t) {
+  return String(t || '').toLowerCase().replace(/[.,!?']/g, '').replace(/\b([ap])\s?m\b/g, '$1m').replace(/\s+/g, ' ').trim();
+}
+
+function parse(raw) {
+  const t = norm(raw), e = {}, has = r => r.test(t);
+  const m = MOVIES.find(x => new RegExp('\\b(' + norm(x.t) + '|' + (x.a || norm(x.t)) + ')\\b').test(t));
+  if (m) e.movie = m.t;
+  const th = THEATRES.find(x => t.includes(x.toLowerCase()));
+  if (th) e.theatre = th;
+  const tm = t.match(/(\d{1,2})(?::(\d{2}))?\s?(am|pm)/);
+  if (tm) e.time = `${tm[1].padStart(2, '0')}:${tm[2] || '00'} ${tm[3].toUpperCase()}`;
+  if (/day after/.test(t)) e.date = 2;
+  else if (/tomorrow/.test(t)) e.date = 1;
+  else if (/today/.test(t)) e.date = 0;
+
+  const q = t.match(/(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:(?:premium|regular|recliner)\s+)?(?:tickets?|seats?)/);
+  if (q) e.qty = NUM[q[1]] || +q[1];
+  const c = t.match(/premium|regular|recliner/);
+  if (c) e.category = c[0][0].toUpperCase() + c[0].slice(1);
+  const sn = [...t.matchAll(/\b([a-f])\s?([1-8])\b(?!\s?[ap]m)/g)].map(x => x[1].toUpperCase() + x[2]);
+  if (sn.length) e.seats = sn;
+
+  // Extract phone / email / otp for modal & verification auto-fill
+  const phoneMatch = t.match(/\b(?:\+?91[-\s]?)?([6-9]\d{9})\b/);
+  if (phoneMatch) e.phone = phoneMatch[1];
+  const emailMatch = t.match(/\b([a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,})\b/);
+  if (emailMatch) e.email = emailMatch[1];
+  const otpMatch = t.match(/\b(?:otp|code)?\s*(\d{6})\b/);
+  if (otpMatch) e.otp = otpMatch[1];
+
+  let i = 'Unknown';
+  if (has(/\b(help|what can you do)\b/)) i = 'Help';
+  else if (has(/\b(go back|back|previous)\b/)||has(/change the theatre/)) i = 'GoBack';
+  else if (has(/\bcancel\b/)) i = 'CancelBooking';
+  else if (has(/\b(my bookings?|booking list|my tickets?|view bookings?|show bookings?|check bookings?|all bookings?|history)\b/)) i = 'ViewMyBookings';
+  else if (has(/\b(pay|payment|checkout|pay now|move to payment|buy tickets?|proceed to payment)\b/)) i = 'ProceedToPayment';
+  else if (has(/\b(remove|deselect|unselect)\b/)) i = 'RemoveSeat';
+  else if (has(/\b(summary|review|read)\b|booking details/)) i = 'ReviewBooking';
+  else if (e.seats || has(/\b(select|choose|pick)\b.*\bseats?\b/) || (e.qty && e.category) || has(/available seats/)) i = 'SelectSeats';
+  else if (e.movie && has(/\b(details|about)\b/)) i = 'ViewMovieDetails';
+  else if (e.movie || (has(/\b(book|tickets?)\b/) && !has(/\b(theatre|show)/))) i = 'SelectMovie';
+  else if (has(/\b(confirm|yes|okay|ok|proceed|continue|sure)\b/)) i = 'Confirm';
+  else if (e.time || (has(/select|choose/) && e.theatre)) i = 'SelectShowtime';
+  else if (e.theatre) i = 'SelectTheatre';
+  else if (e.date != null) i = 'SelectDate';
+  else if (has(/\b(theatres?|near me)\b/)) i = 'FindTheatre';
+  else if (has(/\b(shows?|showtimes?)\b/)) i = 'ViewShowtimes';
+  else if (has(/\b(find|search|look for)\b/)) i = 'SearchMovie';
+  return { i, e, t };
+}
+
+/* ==========================================================================
+   Dialogue Manager & Command Execution
+   ========================================================================== */
+
+function autoSeats(n, category) {
+  for (const r of ROWS) {
+    if (category && cat(r) !== category) continue;
+    let run = [];
+    for (let k = 1; k <= COLS; k++) {
+      const id = r + k;
+      if (seatStatus(id) === 'free') {
+        run.push(id);
+        if (run.length === n) return run;
+      } else {
+        run = [];
+      }
+    }
+  }
+  return null;
+}
+
+function chooseShow(e) {
+  if (e.date != null) S.date = e.date;
+  if (e.theatre) S.th = e.theatre;
+  if (e.time) {
+    if (!TIMES.includes(e.time)) return say(`Showtime ${e.time} is unavailable. Showing: ${TIMES.join(', ')}.`);
+    S.time = e.time;
+  }
+  if (!S.th) return say('Which cinema would you prefer? ' + THEATRES.join(', ') + '.');
+  if (!S.time) return say('Which showtime? ' + TIMES.join(', ') + '.');
+  S.view = 'seats';
+  S.sel = [];
+  S.sm = null;
+  loadSeats();
+  render();
+  say(`Selected ${S.th} at ${S.time} for ${dl(S.date)}. Please select your seats.`);
+}
+
+async function act({ i, e, t }) {
+  if (S.view === 'pay') {
+    if (S.pstep === 1) {
+      if (/approve|confirm|authorized|pay now|yes/i.test(t)) {
+        return decide(true);
+      }
+      if (/decline|cancel|reject|no/i.test(t)) {
+        return cancelPayment();
+      }
+      if (!['Help', 'ReviewBooking', 'GoBack'].includes(i)) {
+        return say('Please scan the QR code on your phone to approve or decline payment.');
+      }
+    }
+  }
+  if (S.view === 'done' && !['ViewMyBookings', 'Help'].includes(i)) {
+    return say('Your booking is complete! Say "My bookings" or return home.');
+  }
+
+  if (e.qty) S.qty = e.qty;
+
+  // Auto-fill contact details spoken by the user
+  if (e.phone) {
+    S.form.phone = e.phone;
+    if ($('cm-phone')) $('cm-phone').value = e.phone;
+  }
+  if (e.email) {
+    S.form.email = e.email;
+    if ($('cm-email')) $('cm-email').value = e.email;
+  }
+  if (e.phone || e.email) {
+    const filled = [e.phone && `📱 ${e.phone}`, e.email && `📧 ${e.email}`].filter(Boolean).join(' & ');
+    say(`Got it — contact saved: ${filled}.`);
+    // If the contact modal was open and now we have enough, close it
+    const hasP = /^\+?\d{10,13}$/.test(String(S.form.phone || '').replace(/[\s-]/g, ''));
+    const hasE = /\S+@\S+\.\S+/.test(S.form.email || '');
+    if ((hasP || hasE) && $('contact-modal')?.style.display !== 'none') {
+      closeContactModal();
+      await goPay();
+      return;
+    }
+  }
+
+  switch (i) {
+    case 'Help':
+      return say('You can say: "Book 2 tickets for Jailer 2", "7 PM show at City Cinemas", "Select 2 recliner seats", "Show my bookings", or "Go back".');
+    case 'GoBack':
+      back();
+      return say('Navigating back.');
+    case 'ViewMyBookings':
+      return openMine();
+    case 'CancelBooking':
+      S.pending = { type: 'cancel' };
+      return say('Would you like to cancel this in-progress booking? Say "yes" or "confirm" to proceed.');
+    case 'SearchMovie':
+      S.q = norm(e.movie || e.t || '');
+      S.view = 'home';
+      render();
+      return say('Here are the search results.');
+    case 'SelectMovie':
+    case 'ViewMovieDetails':
+      if (!e.movie && !S.movie) return say('Which movie would you like to watch?');
+      if (e.movie && e.movie !== S.movie) {
+        S.movie = e.movie;
+        S.th = null;
+        S.time = null;
+        S.sel = [];
+      }
+      S.view = 'details';
+      render();
+      if (e.theatre || e.time || e.date != null) return chooseShow(e);
+      return say(i === 'ViewMovieDetails' ? `${S.movie}: ${mv().s}` : `Available shows for ${S.movie}. Choose a cinema and time.`);
+    case 'FindTheatre':
+    case 'ViewShowtimes':
+      if (!S.movie) return say('Which movie would you like to check?');
+      S.view = 'details';
+      render();
+      return say(`${S.movie} is playing at ${THEATRES.join(', ')}.`);
+    case 'SelectTheatre':
+    case 'SelectShowtime':
+    case 'SelectDate':
+      if (!S.movie) return say('Please select a movie first.');
+      if (S.view === 'home') S.view = 'details';
+      return chooseShow(e);
+    case 'SelectSeats': {
+      if (S.view !== 'seats') {
+        S.movie = S.movie || (e.movie || MOVIES[0].t);
+        S.th = S.th || (e.theatre || THEATRES[0]);
+        S.time = S.time || (e.time || TIMES[2]);
+        S.date = S.date != null ? S.date : (e.date != null ? e.date : 0);
+        S.view = 'seats';
+        S.sel = [];
+        loadSeats();
+        render();
+      }
+      if (e.qty === undefined && !e.seats && /available/.test(t || '')) {
+        const freeCount = ROWS.flatMap(r => [...Array(COLS)].map((_, k) => r + (k + 1))).filter(x => seatStatus(x) === 'free').length;
+        return say(`${freeCount} seats are currently available.`);
+      }
+      let s = e.seats;
+      if (!s) {
+        s = autoSeats(e.qty || S.qty || 1, e.category);
+        if (!s) return say('Could not find enough contiguous seats in that tier.');
+      }
+      const bookedSeats = s.filter(x => seatStatus(x) === 'b');
+      if (bookedSeats.length) return say(`Seat ${bookedSeats.join(' and ')} is already reserved.`);
+      
+      // Immediately select and visually hold seats on screen
+      S.sel = s;
+      S.hold = Date.now() + 300000;
+      S.pending = null;
+      render();
+      playChime('select');
+
+      // If user command asked to pay/checkout right away, advance straight to payment step!
+      if (/pay|payment|checkout|buy|proceed/.test(t)) {
+        await toBook(true);
+        return await goPay();
+      }
+
+      return say(`Selected ${s.join(' and ')}. Total ₹${total()}. Say "proceed to payment" or "pay" to complete your booking.`);
+    }
+    case 'RemoveSeat':
+      if (!e.seats || !S.sel.includes(e.seats[0])) return say('Which selected seat would you like to remove?');
+      S.pending = { type: 'remove', seat: e.seats[0] };
+      return say(`Remove seat ${e.seats[0]}? Say confirm.`);
+    case 'ReviewBooking':
+      return say(S.sel.length ? `${S.movie} at ${S.th}, ${dl(S.date)} ${S.time}. Seats ${S.sel.join(', ')}. Total ₹${total()}. Say "proceed to payment" to pay.` : 'No active seats selected to review.');
+    case 'ProceedToPayment': {
+      if (S.pending && S.pending.type === 'seats') {
+        S.sel = S.pending.seats;
+        S.pending = null;
+      }
+      if (!S.sel.length) {
+        const autoS = autoSeats(2, 'Premium') || autoSeats(2, 'Regular');
+        if (autoS) S.sel = autoS;
+        else return say('Please select your seats first.');
+      }
+      S.hold = Date.now() + 300000;
+      await toBook(true);
+      return await goPay();
+    }
+    case 'Confirm': {
+      const p = S.pending;
+      if (p) {
+        S.pending = null;
+        if (p.type === 'seats') {
+          S.sel = p.seats;
+          S.hold = Date.now() + 300000;
+          await toBook(true);
+          return await goPay();
+        }
+        if (p.type === 'remove') {
+          S.sel = S.sel.filter(x => x !== p.seat);
+          render();
+          return say(`Seat ${p.seat} removed.`);
+        }
+        if (p.type === 'cancel') {
+          reset();
+          return say('Booking reset.');
+        }
+      }
+      if (S.view === 'seats') {
+        if (!S.sel.length) {
+          const autoS = autoSeats(2, 'Premium') || autoSeats(2, 'Regular');
+          if (autoS) S.sel = autoS;
+          else return say('Please select your seats first.');
+        }
+        await toBook(true);
+        return await goPay();
+      }
+      if (S.view === 'book') {
+        return await goPay();
+      }
+      return say('Nothing to confirm right now.');
+    }
+    default:
+      say('I did not catch that. Say "help" to see what I can do.');
+  }
+}
+
+/* ==========================================================================
+   Voice I/O: Microphone, SpeechRecognition & Text-To-Speech
+   ========================================================================== */
+
+// Check for Insecure Context (Chrome blocks mic on network IPs like http://192.168.x.x:3000)
+if (typeof window !== 'undefined' && !window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  window.addEventListener('DOMContentLoaded', () => {
+    const banner = document.createElement('div');
+    banner.style.cssText = "background:#b91c1c;color:#fff;padding:12px 18px;text-align:center;font-size:13px;font-weight:700;position:sticky;top:0;z-index:99999;box-shadow:0 2px 10px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;gap:12px";
+    banner.innerHTML = "<span>⚠️ Chrome disables microphone on network IP URLs. For your mic & earphones to work, please open: <a href='http://localhost:3000' style='color:#fef08a;text-decoration:underline;font-size:14px'>http://localhost:3000</a> on this computer!</span> <button onclick='this.parentElement.remove()' style='background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:4px;padding:2px 8px;cursor:pointer'>✕</button>";
+    document.body.prepend(banner);
+  });
+}
+
+const chatLog = [];
+let ttsSpeaking = false;
+let ttsTimer = null;
+let rec = null;
+let handsFree = false;
+let lastHeard = '';
+let unhandledTranscript = false;
+let isReconnectingMic = false;
+let earphoneDetected = false;
+let activeMicLabel = 'Built-in / Default';
+let audioCaptureRetries = 0;
+let currentLang = 'en-IN';
+let deviceChangeDebounce = null;
+let silenceWatchdog = null;
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+function toggleMicLang() {
+  currentLang = currentLang === 'en-IN' ? 'en-US' : (currentLang === 'en-US' ? 'en-GB' : 'en-IN');
+  const btn = $('mic-lang-btn');
+  if (btn) btn.textContent = currentLang;
+  setVoiceLiveText(`Speech recognition accent: ${currentLang}`);
+  if (rec) {
+    stopListening();
+    startListening();
+  }
+}
+
+function updateMicStatusBadge(earphoneDev) {
+  const pill = $('mic-status-pill');
+  if (!pill) return;
+  if (earphoneDev) {
+    earphoneDetected = true;
+    activeMicLabel = earphoneDev.label || 'Earphones/Headset';
+    const cleanName = earphoneDev.label ? earphoneDev.label.replace(/\s*\([0-9a-fA-F: -]+\)/, '').trim() : 'Earphones';
+    const shortLabel = cleanName.length > 14 ? cleanName.slice(0, 12) + '…' : cleanName;
+    pill.innerHTML = `🎧 ${shortLabel}`;
+    pill.style.borderColor = '#10b981';
+    pill.style.color = '#34d399';
+    pill.title = 'Active: ' + activeMicLabel + ' (Click to reconnect earphone mic)';
+  } else {
+    earphoneDetected = false;
+    activeMicLabel = 'Built-in / Default';
+    pill.innerHTML = '🎙️ Mic: Auto';
+    pill.style.borderColor = '';
+    pill.style.color = '';
+    pill.title = 'Using system mic. Plug in earphones to switch automatically, or click to test.';
+  }
+}
+
+async function checkAudioInputDevices() {
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return null;
+    const devs = await navigator.mediaDevices.enumerateDevices();
+    const audioInputs = devs.filter(d => d.kind === 'audioinput');
+    const earphoneDev = audioInputs.find(d => {
+      const l = (d.label || '').toLowerCase();
+      return /head|ear|bluetooth|airpod|buds|hands-free|wireless|usb audio/i.test(l);
+    });
+    updateMicStatusBadge(earphoneDev);
+    return earphoneDev;
+  } catch(e) {
+    console.warn('Audio device query:', e);
+    return null;
+  }
+}
+
+async function reconnectEarphoneMic(notifyUser = true) {
+  if (isReconnectingMic) return;
+  isReconnectingMic = true;
+  if (notifyUser) {
+    setVoiceLiveText('🎧 Connecting microphone...');
+  }
+
+  // 1. Terminate any active speech recognition session & release test audio
+  if (rec) {
+    try { rec.abort(); } catch(e){}
+    rec = null;
+  }
+  stopMicMeter();
+
+  // 2. Allow OS audio stack 250ms to switch endpoints smoothly
+  await new Promise(r => setTimeout(r, 250));
+
+  // 3. Update device detection
+  const ep = await checkAudioInputDevices();
+  isReconnectingMic = false;
+
+  // 4. Start speech recognition cleanly with refreshed hardware state
+  startListening();
+  if (notifyUser) {
+    const devTitle = ep && ep.label ? ep.label.split('(')[0].trim() : (earphoneDetected ? 'Earphones' : 'Built-in Mic');
+    setVoiceLiveText(`🎙️ ${devTitle} active! Speak now`);
+  }
+}
+
+// Auto-detect when earphones/headsets are plugged in or unplugged in real time (debounced)
+if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+  navigator.mediaDevices.addEventListener('devicechange', () => {
+    if (deviceChangeDebounce) clearTimeout(deviceChangeDebounce);
+    deviceChangeDebounce = setTimeout(async () => {
+      console.log('Audio hardware change detected (earphones connected/disconnected)');
+      const wasRunning = !!rec;
+      const ep = await checkAudioInputDevices();
+      if (ep) {
+        setVoiceLiveText('🎧 Earphones detected! Switching mic...');
+      } else {
+        setVoiceLiveText('🎙️ System mic active.');
+      }
+      if (wasRunning || handsFree) {
+        reconnectEarphoneMic(false);
+      }
+    }, 600);
+  });
+}
+
+function say(text, speak = true) {
+  chatLog.push({ role: 'agent', text });
+  paintChat();
+  if (speak && window.speechSynthesis) {
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 1.05;
+      u.pitch = 1.0;
+      u.onstart = () => {
+        ttsSpeaking = true;
+        if (ttsTimer) clearTimeout(ttsTimer);
+        const estMs = Math.min(8000, Math.max(3000, (text || '').length * 70));
+        ttsTimer = setTimeout(() => { ttsSpeaking = false; }, estMs);
+      };
+      u.onend = () => {
+        ttsSpeaking = false;
+        if (ttsTimer) clearTimeout(ttsTimer);
+      };
+      u.onerror = () => {
+        ttsSpeaking = false;
+        if (ttsTimer) clearTimeout(ttsTimer);
+      };
+      speechSynthesis.speak(u);
+    } catch(err) {
+      ttsSpeaking = false;
+    }
+  }
+}
+
+function paintChat() {
+  const container = $('chat-history');
+  if (!container) return;
+  container.innerHTML = chatLog.slice(-10).map(m => {
+    return `<div class="msg ${m.role}">
+      ${m.role === 'user' ? '🗣 ' : '🤖 '}<b>${m.text}</b>
+      ${m.nlp ? `<div class="msg-nlp">${m.nlp}</div>` : ''}
+    </div>`;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+async function handle(txt) {
+  if (!txt || !txt.trim()) return;
+  unhandledTranscript = false;
+  const p = parse(txt);
+  chatLog.push({ role: 'user', text: txt, nlp: `Intent: ${p.i} | Entities: ${JSON.stringify(p.e)}` });
+  paintChat();
+  await act(p);
+}
+
+function typedCmd() {
+  const el = $('txt-cmd');
+  const v = el.value.trim();
+  if (v) {
+    el.value = '';
+    handle(v);
+  }
+}
+
+function handlePrompt(str) {
+  const dock = $('voice-dock');
+  if (dock && dock.classList.contains('is-minimized')) {
+    dock.classList.remove('is-minimized');
+  }
+  handle(str);
+}
+
+function toggleDockMinimize() {
+  const dock = $('voice-dock');
+  if (dock) {
+    dock.classList.toggle('is-minimized');
+  }
+}
+
+function toggleDockSide() {
+  const dock = $('voice-dock');
+  if (dock) {
+    dock.classList.toggle('dock-left');
+  }
+}
+
+function handleFabClick(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const dock = $('voice-dock');
+  if (dock && dock.classList.contains('is-minimized')) {
+    dock.classList.remove('is-minimized');
+  }
+  toggleListening();
+}
+
+function updateVoiceHints() {
+  const bar = $('voice-hints-bar');
+  if (!bar) return;
+  let hints = [];
+
+  if (S.view === 'home') {
+    hints = [
+      { label: '🎟️ Book Jailer 2', cmd: 'Book two tickets for Jailer' },
+      { label: '⭐ 2 Premium Seats', cmd: 'Select two premium seats' },
+      { label: '📋 My Bookings', cmd: 'Show my bookings' },
+      { label: '💡 Help', cmd: 'Help' }
+    ];
+  } else if (S.view === 'details') {
+    hints = [
+      { label: '🏛️ City Cinemas 6:30 PM', cmd: 'Choose the 06:30 PM show at City Cinemas' },
+      { label: '⭐ 2 Premium Seats', cmd: 'Select two premium seats' },
+      { label: '📋 My Bookings', cmd: 'Show my bookings' },
+      { label: '← Movies', cmd: 'Go back' }
+    ];
+  } else if (S.view === 'seats') {
+    hints = [
+      { label: '👑 2 Recliners', cmd: 'Select two recliner seats' },
+      { label: '⭐ 2 Premium', cmd: 'Select two premium seats' },
+      { label: '🎟️ 2 Regular', cmd: 'Select two regular seats' },
+      { label: '➡️ Continue', cmd: 'Confirm' }
+    ];
+  } else if (S.view === 'book') {
+    hints = [
+      { label: '💳 Proceed to Payment', cmd: 'Proceed to payment' },
+      { label: '← Change Seats', cmd: 'Go back' },
+      { label: '💡 Help', cmd: 'Help' }
+    ];
+  } else if (S.view === 'pay') {
+    hints = [
+      { label: '✓ Review Booking', cmd: 'Review booking' },
+      { label: '← Change Details', cmd: 'Go back' },
+      { label: '💡 Help', cmd: 'Help' }
+    ];
+  } else if (S.view === 'done') {
+    hints = [
+      { label: '📋 View My Bookings', cmd: 'Show my bookings' },
+      { label: '🎬 Book Another Movie', cmd: 'Go back' }
+    ];
+  } else {
+    hints = [
+      { label: '🎬 Movies', cmd: 'Go back' },
+      { label: '📋 My Bookings', cmd: 'Show my bookings' },
+      { label: '💡 Help', cmd: 'Help' }
+    ];
+  }
+
+  bar.innerHTML = hints.map(h => `
+    <span class="hint-chip" onclick="handlePrompt('${h.cmd}')">${h.label}</span>
+  `).join('');
+}
+
+function setVoiceLiveText(str) {
+  const el = $('voice-live-transcript');
+  if (el) el.textContent = str;
+}
+
+function setWave(active) {
+  const w = $('dock-wave');
+  if (w) w.className = active ? 'panel-wave wave-active' : 'panel-wave';
+}
+
+function setMicFab(active) {
+  const fab = $('mic-fab');
+  if (fab) {
+    if (active) fab.classList.add('listening');
+    else fab.classList.remove('listening');
+  }
+}
+
+// Seamless Voice Recognition Controller
+function toggleListening() {
+  if (!SR) {
+    setVoiceLiveText('Speech recognition requires Chrome or Edge. Use text input below.');
+    say('Speech recognition requires Google Chrome or Microsoft Edge. You can also type your command.');
+    $('txt-cmd')?.focus();
+    return;
+  }
+
+  if (rec) {
+    stopListening();
+  } else {
+    startListening();
+  }
+}
+
+let speechPauseTimer = null;
+
+function startListening() {
+  if (!SR) return;
+
+  // 1. Release any prior recognition session cleanly
+  if (rec) {
+    try { rec.abort(); } catch(e){}
+    rec = null;
+  }
+
+  // 2. Stop any active speech synthesizer or background meter audio to prevent hardware locks
+  if (window.speechSynthesis) {
+    try { speechSynthesis.cancel(); } catch(e){}
+  }
+  ttsSpeaking = false;
+  if (ttsTimer) clearTimeout(ttsTimer);
+  stopMicMeter();
+
+  // 3. Immediate visual feedback
+  setMicFab(true);
+  setWave(true);
+  setVoiceLiveText(earphoneDetected ? '🎧 Listening via Earphones... speak now' : '🎙️ Listening via Mic... speak now');
+  $('panel-state-icon').textContent = '🎙️';
+
+  try {
+    rec = new SR();
+    rec.lang = currentLang || 'en-IN';
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.maxAlternatives = 1;
+
+    function resetSilenceTimer() {
+      if (silenceWatchdog) clearTimeout(silenceWatchdog);
+      if (!handsFree) {
+        // Generous 14-second window: gives user plenty of time to speak
+        silenceWatchdog = setTimeout(() => {
+          if (rec && !handsFree) {
+            setVoiceLiveText('Microphone paused. Tap 🎤 to speak.');
+            stopListening();
+          }
+        }, 14000);
+      }
+    }
+    resetSilenceTimer();
+
+    rec.onstart = () => {
+      audioCaptureRetries = 0;
+      setMicFab(true);
+      setWave(true);
+      setVoiceLiveText(earphoneDetected ? '🎧 Earphones active — listening...' : '🎙️ Mic active — speak your command');
+      $('panel-state-icon').textContent = '🎙️';
+      resetSilenceTimer();
+    };
+
+    rec.onresult = ev => {
+      if (ttsSpeaking) return; // Prevent echo loop from assistant's own TTS
+      resetSilenceTimer();
+      let interim = '';
+      let finalStr = '';
+
+      for (let i = ev.resultIndex; i < ev.results.length; ++i) {
+        if (ev.results[i].isFinal) {
+          finalStr += ev.results[i][0].transcript;
+        } else {
+          interim += ev.results[i][0].transcript;
+        }
+      }
+
+      const activeText = (finalStr || interim).trim();
+      if (activeText) {
+        lastHeard = activeText;
+        unhandledTranscript = true;
+        setVoiceLiveText('🗣️ “' + activeText + '”');
+      }
+
+      // Fast-path: Chrome delivered a final transcript
+      if (finalStr.trim()) {
+        if (speechPauseTimer) clearTimeout(speechPauseTimer);
+        const query = finalStr.trim();
+        unhandledTranscript = false;
+        lastHeard = '';
+        if (silenceWatchdog) clearTimeout(silenceWatchdog);
+        handle(query);
+        if (!handsFree) {
+          setTimeout(() => {
+            if (rec && !handsFree) stopListening();
+          }, 500);
+        }
+        return;
+      }
+
+      // Robust-path: Continuous interim speech detection (fires 850ms after user pauses speaking)
+      if (activeText) {
+        if (speechPauseTimer) clearTimeout(speechPauseTimer);
+        speechPauseTimer = setTimeout(() => {
+          if (unhandledTranscript && lastHeard && lastHeard.trim()) {
+            const query = lastHeard.trim();
+            unhandledTranscript = false;
+            lastHeard = '';
+            if (silenceWatchdog) clearTimeout(silenceWatchdog);
+            handle(query);
+            if (!handsFree) {
+              setTimeout(() => {
+                if (rec && !handsFree) stopListening();
+              }, 500);
+            }
+          }
+        }, 850);
+      }
+    };
+
+    rec.onerror = ev => {
+      console.warn('SpeechRecognition error:', ev.error);
+      if (ev.error === 'aborted') return;
+      if (silenceWatchdog) clearTimeout(silenceWatchdog);
+
+      if (ev.error === 'no-speech') {
+        setVoiceLiveText('No speech heard yet. Speak into your mic or earphones...');
+        // Do not kill the mic immediately on momentary silence
+        return;
+      }
+
+      setWave(false);
+      setMicFab(false);
+
+      if (ev.error === 'not-allowed') {
+        setVoiceLiveText('⚠️ Mic blocked. Click the lock/camera icon in Chrome URL bar to Allow.');
+        handsFree = false;
+        updateHfUI();
+      } else if (ev.error === 'audio-capture') {
+        setVoiceLiveText('⚠️ Audio capture error. Ensure mic/earphones are plugged in and not muted.');
+      } else if (ev.error === 'network') {
+        // Fallback between en-IN and en-US if speech recognition server had connectivity issue
+        if (currentLang === 'en-IN') {
+          currentLang = 'en-US';
+          const btn = $('mic-lang-btn');
+          if (btn) btn.textContent = 'en-US';
+          setVoiceLiveText('Reconnecting speech engine with en-US accent...');
+          setTimeout(() => { if (!rec) startListening(); }, 500);
+        } else {
+          setVoiceLiveText('Speech service network error. Check internet connection.');
+        }
+      } else {
+        setVoiceLiveText('Mic status: ' + ev.error);
+      }
+    };
+
+    rec.onend = () => {
+      if (silenceWatchdog) clearTimeout(silenceWatchdog);
+      if (speechPauseTimer) clearTimeout(speechPauseTimer);
+      setMicFab(false);
+      setWave(false);
+      $('panel-state-icon').textContent = '🤖';
+
+      // Process any unfinalized transcript
+      if (unhandledTranscript && lastHeard && lastHeard.trim()) {
+        const q = lastHeard.trim();
+        lastHeard = '';
+        unhandledTranscript = false;
+        handle(q);
+      }
+
+      rec = null;
+      if (handsFree && S.view !== 'pay' && S.view !== 'done') {
+        setTimeout(() => { if (handsFree) startListening(); }, 400);
+      } else {
+        setVoiceLiveText('Tap 🎤 to speak, or type below.');
+      }
+    };
+
+    try {
+      rec.start();
+    } catch(err) {
+      console.warn('Initial rec.start() note, attempting queued start:', err);
+      setTimeout(() => {
+        try { if (rec) rec.start(); } catch(e){}
+      }, 200);
+    }
+  } catch(err) {
+    rec = null;
+    if (silenceWatchdog) clearTimeout(silenceWatchdog);
+    setMicFab(false);
+    setWave(false);
+    setVoiceLiveText('Could not start mic: ' + (err.message || 'Error'));
+  }
+}
+
+function stopListening() {
+  handsFree = false;
+  updateHfUI();
+  if (silenceWatchdog) clearTimeout(silenceWatchdog);
+  if (speechPauseTimer) clearTimeout(speechPauseTimer);
+  if (rec) {
+    try {
+      rec.stop();
+    } catch(e) {
+      try { rec.abort(); } catch(err){}
+    }
+    rec = null;
+  }
+  setMicFab(false);
+  setWave(false);
+  setVoiceLiveText('Microphone stopped. Tap 🎤 to resume.');
+}
+
+function toggleHandsFree() {
+  handsFree = !handsFree;
+  updateHfUI();
+  if (handsFree) {
+    say('Hands-free mode activated. I am listening.');
+    if (!rec) startListening();
+  } else {
+    if (rec) stopListening();
+    say('Hands-free mode off.');
+  }
+}
+
+function updateHfUI() {
+  const btn = $('hf-btn');
+  if (btn) {
+    btn.textContent = `🎧 Hands-free: ${handsFree ? 'On' : 'Off'}`;
+    btn.className = handsFree ? 'pill-btn active' : 'pill-btn';
+  }
+}
+
+/* ==========================================================================
+   Microphone Setup & Decibel Meter
+   ========================================================================== */
+
+let audioCtx = null;
+let meterStream = null;
+let meterRaf = null;
+
+function openMicModal() {
+  $('mic-modal').style.display = 'flex';
+  populateAudioDevices();
+}
+
+function closeMicModal() {
+  stopMicMeter();
+  $('mic-modal').style.display = 'none';
+}
+
+async function populateAudioDevices() {
+  const sel = $('mic-dev-select');
+  sel.innerHTML = '<option value="">Detecting microphones...</option>';
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => t.stop());
+    const devices = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'audioinput');
+    
+    // Sort so earphone/headset devices appear first if connected
+    devices.sort((a, b) => {
+      const aIsEar = /head|ear|bluetooth|airpod|buds|hands-free|wireless/i.test(a.label);
+      const bIsEar = /head|ear|bluetooth|airpod|buds|hands-free|wireless/i.test(b.label);
+      return (bIsEar ? 1 : 0) - (aIsEar ? 1 : 0);
+    });
+
+    sel.innerHTML = devices.map(d => {
+      const isEar = /head|ear|bluetooth|airpod|buds|hands-free|wireless/i.test(d.label);
+      const icon = isEar ? '🎧 ' : '🎙️ ';
+      const isDef = d.deviceId === 'default';
+      return `<option value="${d.deviceId}">${icon}${d.label || 'Microphone'} ${isDef ? '(Default)' : ''}</option>`;
+    }).join('');
+
+    await checkAudioInputDevices();
+    startMicMeter();
+  } catch(err) {
+    sel.innerHTML = '<option value="">Permission denied or no mic found</option>';
+    $('meter-info').textContent = '⚠️ Microphone permission is blocked or no input device was found.';
+  }
+}
+
+async function startMicMeter() {
+  stopMicMeter();
+  const sel = $('mic-dev-select');
+  const devId = sel.value;
+  try {
+    meterStream = await navigator.mediaDevices.getUserMedia({
+      audio: devId ? { deviceId: { exact: devId } } : true
+    });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+    const source = audioCtx.createMediaStreamSource(meterStream);
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    source.connect(analyser);
+
+    const buffer = new Uint8Array(analyser.frequencyBinCount);
+    const fill = $('meter-fill');
+    const info = $('meter-info');
+
+    function checkVol() {
+      if (!audioCtx) return;
+      analyser.getByteFrequencyData(buffer);
+      let sum = 0;
+      for (let i = 0; i < buffer.length; i++) sum += buffer[i];
+      const avg = sum / buffer.length;
+      const pct = Math.min(100, Math.round((avg / 128) * 100));
+      if (fill) fill.style.width = pct + '%';
+      if (info) {
+        if (pct > 4) {
+          info.innerHTML = `<span style="color:#34d399;font-weight:700">🎙️ Sound detected: ${pct}% level (Mic is picking up your voice!)</span>`;
+        } else {
+          info.textContent = 'Speak into your microphone or earphone to test level...';
+        }
+      }
+      meterRaf = requestAnimationFrame(checkVol);
+    }
+    checkVol();
+  } catch(err) {
+    $('meter-info').innerHTML = `<span style="color:#f87171">⚠️ Could not access device: ${err.message}. Check browser permissions.</span>`;
+  }
+}
+
+function stopMicMeter() {
+  if (meterRaf) cancelAnimationFrame(meterRaf);
+  if (meterStream) meterStream.getTracks().forEach(t => t.stop());
+  if (audioCtx) { try { audioCtx.close(); } catch(e){} }
+  meterRaf = null;
+  meterStream = null;
+  audioCtx = null;
+}
+
+async function runMicDiagnostics() {
+  const lines = [];
+  lines.push('Browser Engine: ' + (SR ? 'SpeechRecognition Supported ✅' : 'SpeechRecognition NOT supported (Use Chrome/Edge) ❌'));
+  lines.push('Origin Context: ' + (isSecureContext ? 'Secure Context (localhost/HTTPS) ✅' : 'INSECURE (Mic blocked by Chrome on IP URL) ❌'));
+  lines.push('Current URL: ' + location.href);
+  lines.push('Online Status: ' + (navigator.onLine ? 'Connected to Internet ✅' : 'Offline ❌'));
+  lines.push('Speech Accent: ' + currentLang);
+  if (navigator.permissions && navigator.permissions.query) {
+    try {
+      const p = await navigator.permissions.query({ name: 'microphone' });
+      lines.push('Browser Mic Permission: ' + p.state.toUpperCase());
+    } catch(e){}
+  }
+  if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    try {
+      const devs = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'audioinput');
+      lines.push('\nDetected Microphones (' + devs.length + '):');
+      devs.forEach((d, i) => {
+        lines.push(`  ${i+1}. ${d.label || 'Microphone (unlabeled)'} ${d.deviceId === 'default' ? '[Default]' : ''}`);
+      });
+    } catch(e){}
+  }
+  alert("Microphone Diagnostics Report:\n\n" + lines.join("\n"));
+}
+
+/* ==========================================================================
+   API Client, Local Persistence & My Bookings Management
+   ========================================================================== */
+
+const api = async (path, method, body) => {
+  try {
+    const res = await fetch('/api' + path, {
+      method: method || (body ? 'POST' : 'GET'),
+      headers: {
+        'content-type': 'application/json',
+        ...(TOK ? { authorization: 'Bearer ' + TOK } : {})
+      },
+      body: body && JSON.stringify(body)
+    });
+    let json = {};
+    try { json = await res.json(); } catch(e){}
+    return { ok: res.ok, s: res.status, b: json };
+  } catch(err) {
+    return { ok: false, s: 0, b: { error: 'Network error or server unavailable' } };
+  }
+};
+
+const showIdStr = () => {
+  const mIdx = MOVIES.findIndex(x => x.t === S.movie);
+  const tIdx = THEATRES.indexOf(S.th);
+  const timeIdx = TIMES.indexOf(S.time);
+  return `m${mIdx >= 0 ? mIdx : 0}-t${tIdx >= 0 ? tIdx : 0}-${S.date}-${timeIdx >= 0 ? timeIdx : 0}`;
+};
+
+async function loadSeats() {
+  if (!API) return;
+  const r = await api('/shows/' + showIdStr() + '/seats');
+  if (r.ok && Array.isArray(r.b)) {
+    S.sm = Object.fromEntries(r.b.map(x => [x.seatId, x.status]));
+  } else {
+    S.sm = null;
+  }
+  render();
+}
+
+function ensureAuthSession() {
+  if (!TOK) {
+    TOK = 'demo-guest-' + Math.random().toString(36).slice(2, 9);
+    S.user = { name: S.form.name || 'Guest User', guest: true };
+    localStorage.setItem(STORAGE_TOKEN_KEY, TOK);
+    localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(S.user));
+  }
+}
+
+function saveLocalBooking(b) {
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem(STORAGE_LOCAL_BK_KEY)) || []; } catch(e){}
+  const idx = list.findIndex(x => x.bookingId === b.bookingId);
+  if (idx >= 0) list[idx] = b;
+  else list.unshift(b);
+  localStorage.setItem(STORAGE_LOCAL_BK_KEY, JSON.stringify(list));
+}
+
+function getLocalBookings() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_LOCAL_BK_KEY)) || []; } catch(e){ return []; }
+}
+
+async function toBook(silent = false) {
+  if (!S.sel.length) return say('Please select at least one seat first.');
+  if (API) {
+    ensureAuthSession();
+    if (!(S.hid && S.hsel === S.sel.join())) {
+      if (S.hid) await api('/holds/' + S.hid + '/release', 'POST', {});
+      S.srvB = null;
+      const r = await api('/shows/' + showIdStr() + '/hold', 'POST', { seats: S.sel });
+      if (!r.ok) {
+        await loadSeats();
+        S.sel = S.sel.filter(x => S.sm && S.sm[x] === 'AVAILABLE');
+        S.hid = null;
+        render();
+        return say(r.s === 409 ? 'One of those seats was just taken. Please choose another.' : 'Could not hold the selected seats.');
+      }
+      S.hid = r.b.holdId;
+      S.hsel = S.sel.join();
+      S.hold = r.b.holdExpiresAt;
+    }
+  }
+  if (!silent) {
+    S.view = 'book';
+    render();
+    say('Review your booking summary. Say "proceed to payment" or "pay" to continue.');
+  }
+}
+
+function openContactModal() {
+  const m = $('contact-modal');
+  if (m) {
+    $('cm-phone').value = S.form.phone || '';
+    $('cm-email').value = S.form.email || '';
+    m.style.display = 'flex';
+  }
+}
+
+function closeContactModal() {
+  const m = $('contact-modal');
+  if (m) m.style.display = 'none';
+}
+
+function openTermsModal() {
+  const m = $('terms-modal');
+  if (m) m.style.display = 'flex';
+}
+
+function closeTermsModal() {
+  const m = $('terms-modal');
+  if (m) m.style.display = 'none';
+}
+
+function acceptTermsAndClose() {
+  S.termsAccepted = true;
+  closeTermsModal();
+  const chk = $('terms-chk');
+  if (chk) chk.checked = true;
+  say('Terms & Conditions accepted. You can now proceed to payment and OTP verification.');
+}
+
+async function saveContact() {
+  const phone = ($('cm-phone')?.value || '').trim();
+  const email = ($('cm-email')?.value || '').trim();
+  const cleanPhone = phone.replace(/[\s-]/g, '');
+  const hasPhone = /^\+?\d{10,13}$/.test(cleanPhone);
+  const hasEmail = /\S+@\S+\.\S+/.test(email);
+  if (!hasPhone && !hasEmail) {
+    alert('Please enter at least a valid mobile number (10 digits) or email address.');
+    return;
+  }
+  if (phone) S.form.phone = phone;
+  if (email) S.form.email = email;
+  closeContactModal();
+  await goPay();
+}
+
+async function goPay() {
+  if (!S.sel.length) return say('Please choose your seats before paying.');
+
+  // Sync latest values from review inputs if visible
+  if ($('inp-name')) S.form.name = ($('inp-name').value || '').trim();
+  if ($('inp-phone')) S.form.phone = ($('inp-phone').value || '').trim();
+  if ($('inp-email')) S.form.email = ($('inp-email').value || '').trim();
+
+  const f = S.form;
+  const cleanPhone = String(f.phone || '').replace(/[\s-]/g, '');
+  const hasPhone = /^\+?\d{10,13}$/.test(cleanPhone);
+  const hasEmail = /\S+@\S+\.\S+/.test(String(f.email || '').trim());
+
+  // Require at least phone OR email - open modal if neither provided
+  if (!hasPhone && !hasEmail) {
+    openContactModal();
+    say('Please provide your mobile number or email so we can send your ticket.');
+    return;
+  }
+
+  // Auto-fill name if empty
+  if (!f.name || !f.name.trim()) f.name = 'Guest';
+
+  if (API) {
+    ensureAuthSession();
+    if (!S.hid) await toBook(true);
+    let r = await api('/bookings', 'POST', { holdId: S.hid, customer: f, coupon: S.coupon ? 'VOICE10' : '' });
+    if (!r.ok && r.b && r.b.bookingId) {
+      // Update customer details and coupon on existing pending booking
+      await api('/bookings/' + r.b.bookingId + '/customer', 'POST', { customer: f });
+      if (S.coupon) await api('/bookings/' + r.b.bookingId + '/coupon', 'POST', { coupon: 'VOICE10' });
+      const e = await api('/bookings/' + r.b.bookingId);
+      r = { ok: e.ok, b: e.b };
+    }
+    if (!r.ok) return say(r.b?.error || 'Could not create booking. Please reselect seats.');
+    S.srvB = r.b;
+  }
+  S.view = 'pay';
+  S.pstep = 0;
+  S.ref = 'BK' + (hash(S.movie + S.sel.join()) % 900000 + 100000);
+  S.status = '';
+  render();
+  playChime('checkout');
+  say(`Your booking for ${S.movie} is ready. Total ₹${total()}. Please authorize payment below.`);
+}
+
+function stopPaymentPolling() {
+  if (S.pollTimer) {
+    clearInterval(S.pollTimer);
+    S.pollTimer = null;
+  }
+}
+
+function startPaymentPolling(pid) {
+  stopPaymentPolling();
+  S.pollTimer = setInterval(async () => {
+    try {
+      const res = await fetch('/api/payments/' + pid + '/status');
+      if (!res.ok) return;
+      const d = await res.json();
+      if (d.paymentStatus === 'SUCCESS') {
+        stopPaymentPolling();
+        if (d.booking) {
+          const b = d.booking;
+          S.bk = {
+            id: b.bookingId,
+            movieTitle: b.movieTitle || S.movie,
+            theatreName: b.theatreName || S.th,
+            date: S.date,
+            time: S.time,
+            seats: S.sel,
+            paid: b.totalAmount,
+            method: S.pm,
+            txn: b.paymentStatus || ('DEMO' + Date.now().toString(36).toUpperCase()),
+            createdAt: b.createdAt || new Date().toISOString(),
+            customerDetails: b.customerDetails || S.form,
+            notification: b.notification || null
+          };
+          saveLocalBooking(S.bk);
+        }
+        S.view = 'done';
+        S.hid = null;
+        S.srvB = null;
+        playChime('success');
+        say(`Payment approved on your phone! Your tickets for ${S.movie} are confirmed. You can now download or view your digital ticket!`);
+        render();
+      } else if (d.paymentStatus === 'FAILED') {
+        stopPaymentPolling();
+        S.status = 'failed';
+        S.pstep = 0;
+        playChime('select');
+        say(`Payment was declined on your phone. Your seats are still held. You can retry safely.`);
+        render();
+      }
+    } catch(e) {}
+  }, 1200);
+}
+
+function cancelPayment() {
+  stopPaymentPolling();
+  S.pstep = 0;
+  render();
+}
+
+async function startPay() {
+  if (!S.termsAccepted) {
+    say('Please accept the Terms & Conditions before scanning to authorize payment.');
+    alert('⚠️ Please accept the Terms & Conditions and Cancellation Policy to proceed.');
+    $('terms-chk')?.focus();
+    return;
+  }
+  S.status = '';
+  if (API) {
+    const r = await api('/payments/initiate', 'POST', { bookingId: S.srvB.bookingId });
+    if (!r.ok) {
+      S.status = 'failed';
+      return render();
+    }
+    S.pid = r.b.paymentId;
+    S.qrSvg = r.b.qrSvg;
+    S.approvalUrl = r.b.approvalUrl;
+  } else {
+    S.pid = 'PAY' + Math.random().toString(36).slice(2, 8).toUpperCase();
+    S.approvalUrl = window.location.origin + '/approve/' + S.pid;
+  }
+  S.pstep = 1;
+  render();
+  startPaymentPolling(S.pid);
+  playChime('checkout');
+  say(`Please scan the QR code with your phone camera to approve or decline payment of ₹${total()}.`);
+}
+
+async function decide(ok) {
+  stopPaymentPolling();
+  S.pstep = 2;
+  S.status = 'verifying';
+  render();
+
+  const cleanPhone = String(S.form.phone || '').replace(/[\s-]/g, '');
+  const hasPhone = /^\+?\d{10,13}$/.test(cleanPhone);
+  const hasEmail = /\S+@\S+\.\S+/.test(String(S.form.email || '').trim());
+
+  if (API) {
+    const r = await api('/demo-gateway/' + S.pid + '/complete', 'POST', { approve: ok && !S.failDemo });
+    if (r.ok && r.b.booking && r.b.booking.bookingStatus === 'CONFIRMED') {
+      const b = r.b.booking;
+      S.bk = {
+        id: b.bookingId,
+        movieTitle: b.movieTitle || S.movie,
+        theatreName: b.theatreName || S.th,
+        date: S.date,
+        time: S.time,
+        seats: S.sel,
+        paid: b.totalAmount,
+        method: S.pm,
+        txn: r.b.payment?.providerTransactionId || ('DEMO' + Date.now().toString(36).toUpperCase()),
+        createdAt: b.createdAt || new Date().toISOString(),
+        customerDetails: b.customerDetails || S.form,
+        notification: b.notification || null
+      };
+      saveLocalBooking(S.bk);
+      S.view = 'done';
+      S.hid = null;
+      S.srvB = null;
+      playChime('success');
+      const deliveryTarget = hasPhone ? 'WhatsApp (+91 ' + cleanPhone.replace(/^(\+91|91)/, '') + ')' : 'email (' + S.form.email + ')';
+      say(`Payment approved! Your tickets for ${S.movie} are confirmed. Official ticket sent to your ${deliveryTarget}!`);
+
+      // Automatically dispatch ticket to WhatsApp on user's phone
+      const rawP = cleanPhone.replace(/^(\+91|91)/, '');
+      if (hasPhone && rawP) {
+        const passUrl = window.location.origin + '/api/tickets/' + b.bookingId;
+        const msg = `🎟️ Official VoiceTix Cinema Pass\nBooking ID: ${b.bookingId}\nMovie: ${b.movieTitle || S.movie}\nCinema: ${b.theatreName || S.th}\nShowtime: ${S.time}\nSeats: ${S.sel.join(', ')}\nAmount Paid: Rs. ${b.totalAmount}\nPass Link: ${passUrl}`;
+        const waUrl = 'https://api.whatsapp.com/send?phone=91' + rawP + '&text=' + encodeURIComponent(msg);
+        try { window.open(waUrl, '_blank'); } catch(e){}
+      }
+    } else {
+      S.status = 'failed';
+      S.pstep = 0;
+    }
+    render();
+    return;
+  }
+
+  // Client Simulation fallback
+  setTimeout(() => {
+    if (!ok || S.failDemo) {
+      S.status = 'failed';
+      S.pstep = 0;
+      render();
+      return;
+    }
+    const bId = 'BK' + (hash(S.ref + Date.now()) % 900000 + 100000);
+    S.bk = {
+      id: bId,
+      movieTitle: S.movie,
+      theatreName: S.th,
+      date: S.date,
+      time: S.time,
+      seats: [...S.sel],
+      paid: total(),
+      method: S.pm,
+      txn: 'VTX' + Date.now().toString(36).toUpperCase(),
+      createdAt: new Date().toISOString(),
+      customerDetails: { ...S.form },
+      notification: {
+        smsSent: hasPhone,
+        whatsappSent: hasPhone,
+        emailSent: hasEmail,
+        recipient: hasPhone ? cleanPhone : S.form.email,
+        smsMessage: hasPhone ? `VoiceTix Cinema: Booking ${bId} for "${S.movie}" is CONFIRMED! Showtime: ${S.time}, Seats: ${S.sel.join(', ')}. Pass link: ${window.location.origin}/api/tickets/${bId}` : null,
+        sentAt: new Date().toISOString()
+      }
+    };
+    saveLocalBooking(S.bk);
+    S.view = 'done';
+    playChime('success');
+    say(`Payment approved! Your tickets for ${S.movie} are confirmed. Ticket sent to your ${hasPhone ? 'WhatsApp' : 'email'}!`);
+
+    // Automatically dispatch ticket to WhatsApp on user's phone
+    const rawP = cleanPhone.replace(/^(\+91|91)/, '');
+    if (hasPhone && rawP) {
+      const passUrl = window.location.origin + '/api/tickets/' + bId;
+      const msg = `🎟️ Official VoiceTix Cinema Pass\nBooking ID: ${bId}\nMovie: ${S.movie}\nCinema: ${S.th}\nShowtime: ${S.time}\nSeats: ${S.sel.join(', ')}\nAmount Paid: Rs. ${total()}\nPass Link: ${passUrl}`;
+      const waUrl = 'https://api.whatsapp.com/send?phone=91' + rawP + '&text=' + encodeURIComponent(msg);
+      try { window.open(waUrl, '_blank'); } catch(e){}
+    }
+    render();
+  }, 1200);
+}
+
+// Open My Bookings with safe API call and local backup merge
+async function openMine() {
+  ensureAuthSession();
+  let serverBookings = [];
+  if (API && TOK) {
+    const r = await api('/bookings/me');
+    if (r.ok && Array.isArray(r.b)) {
+      serverBookings = r.b;
+    }
+  }
+
+  const localBookings = getLocalBookings();
+  
+  // Format local bookings to match server structure
+  const formattedLocal = localBookings.map(lb => ({
+    bookingId: lb.id,
+    movieId: lb.movieTitle,
+    movieTitle: lb.movieTitle,
+    theatreId: lb.theatreName,
+    theatreName: lb.theatreName,
+    startTime: lb.time,
+    showDate: lb.date,
+    seatNumbers: lb.seats || [],
+    totalAmount: lb.paid,
+    bookingStatus: 'CONFIRMED',
+    paymentStatus: 'PAID',
+    createdAt: lb.createdAt || new Date().toISOString()
+  }));
+
+  // Merge and deduplicate by bookingId
+  const map = new Map();
+  serverBookings.forEach(b => map.set(b.bookingId, b));
+  formattedLocal.forEach(b => {
+    if (!map.has(b.bookingId)) map.set(b.bookingId, b);
+  });
+
+  S.mine = Array.from(map.values());
+  S.view = 'mine';
+  render();
+  say(`Found ${S.mine.length} booking${S.mine.length === 1 ? '' : 's'}.`);
+}
+
+async function resendTicket() {
+  if (!S.bk) return;
+  const cleanPhone = String(S.form.phone || '').replace(/[\s-]/g, '');
+  const hasPhone = /^\+?\d{10,13}$/.test(cleanPhone);
+  const channel = hasPhone ? 'SMS' : 'EMAIL';
+  const target = hasPhone ? ('+91 ' + cleanPhone.replace(/^\+91/, '')) : S.form.email;
+  if (API) {
+    const r = await api('/bookings/' + S.bk.id + '/resend', 'POST', { channel });
+    if (r.ok) {
+      say(`Ticket resent via ${r.b.channel} to ${r.b.target}.`);
+      alert(`✅ Ticket resent successfully via ${r.b.channel} to ${r.b.target}!`);
+      return;
+    }
+  }
+  say(`Ticket resent to ${target}.`);
+  alert(`✅ Ticket pass resent successfully to ${target}!`);
+}
+
+function shareTicket(id) {
+  const b = S.bk;
+  if (!b) return;
+  const passUrl = window.location.origin + '/api/tickets/' + id;
+  const text = `VoiceTix Cinema Pass: Booking ${id} for "${b.movieTitle || S.movie}" is CONFIRMED! Seats: ${(b.seats || S.sel).join(', ')}. Pass link: ${passUrl}`;
+  if (navigator.share) {
+    navigator.share({ title: 'VoiceTix Cinema Admission Pass', text, url: passUrl }).catch(() => {});
+  } else {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('📋 Ticket pass message copied to clipboard!\nYou can paste and send it directly to your mobile via SMS or WhatsApp.');
+      }).catch(() => {
+        prompt('Copy your mobile ticket pass message below:', text);
+      });
+    } else {
+      prompt('Copy your mobile ticket pass message below:', text);
+    }
+  }
+}
+
+async function cancelBooking(id) {
+  if (!confirm('Are you sure you want to cancel booking ' + id + '? Seats will be released.')) return;
+  if (API) {
+    await api('/bookings/' + id + '/cancel', 'POST', {});
+  }
+  // Update local storage status
+  const locals = getLocalBookings();
+  const target = locals.find(x => x.id === id);
+  if (target) {
+    target.status = 'CANCELLED';
+    saveLocalBooking(target);
+  }
+  openMine();
+  say('Booking ' + id + ' has been cancelled.');
+}
+
+function showTicketModal(bkId) {
+  const item = S.mine.find(b => b.bookingId === bkId);
+  if (!item) return;
+  const mTitle = item.movieTitle || item.movieId;
+  const mov = MOVIES.find(m => m.t === mTitle) || { e: '🎬', c: '#7c2d12' };
+  const target = $('modal-ticket-target');
+  
+  target.innerHTML = `
+    <div class="ticket-wrapper">
+      <div class="ticket-main">
+        <div class="ticket-header-strip">
+          <div style="font-size:11px;font-weight:800;letter-spacing:1px;opacity:0.85">VOICETIX AI · ADMIT ONE</div>
+          <h2 style="margin:4px 0 0;font-size:24px">${mov.e} ${mTitle}</h2>
+        </div>
+        <div class="ticket-grid">
+          <div class="t-field"><dt>Booking ID</dt><dd>${item.bookingId}</dd></div>
+          <div class="t-field"><dt>Status</dt><dd style="color:#10b981">${item.bookingStatus}</dd></div>
+          <div class="t-field"><dt>Cinema</dt><dd>${item.theatreName || item.theatreId}</dd></div>
+          <div class="t-field"><dt>Showtime</dt><dd>${item.startTime}</dd></div>
+          <div class="t-field"><dt>Seats (${item.seatNumbers?.length || 0})</dt><dd>${(item.seatNumbers || []).join(', ')}</dd></div>
+          <div class="t-field"><dt>Total Amount</dt><dd>₹${item.totalAmount} (PAID)</dd></div>
+        </div>
+      </div>
+      <div class="ticket-stub">
+        ${renderQrSvg(item.bookingId)}
+        <div style="font-size:11px;font-weight:700;color:#64748b;margin-top:8px">GATE ENTRY QR</div>
+        <div style="font-size:12px;font-weight:800;color:#0f172a;margin-top:4px">${item.bookingId}</div>
+      </div>
+    </div>
+  `;
+  $('ticket-modal').style.display = 'flex';
+}
+
+function closeTicketModal() {
+  $('ticket-modal').style.display = 'none';
+}
+
+/* User Auth Management */
+function userLogin() {
+  const un = ($('un-input')?.value || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+  const dn = ($('dn-input')?.value || '').trim() || un;
+  if (!un) return alert('Please enter a username.');
+  TOK = 'demo-' + un;
+  S.user = { name: dn, admin: un === 'admin', username: un };
+  S.form.name = dn;
+  localStorage.setItem(STORAGE_TOKEN_KEY, TOK);
+  localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(S.user));
+  go('home');
+  say(`Welcome, ${dn}! You are now logged in.`);
+}
+
+function userLogout() {
+  TOK = null;
+  S.user = null;
+  localStorage.removeItem(STORAGE_TOKEN_KEY);
+  localStorage.removeItem(STORAGE_USER_KEY);
+  go('home');
+  say('You have logged out.');
+}
+
+/* ==========================================================================
+   Navigation & UI Helpers
+   ========================================================================== */
+
+function go(view) {
+  S.view = view;
+  if (view === 'home') {
+    S.q = '';
+    const qEl = $('q');
+    if (qEl) qEl.value = '';
+  }
+  render();
+}
+
+function back() {
+  stopPaymentPolling();
+  const prev = { pay: 'book', book: 'seats', seats: 'details', details: 'home', mine: 'home', login: 'home' }[S.view];
+  if (prev) {
+    S.view = prev;
+    S.pending = null;
+    S.termsAccepted = false;
+    render();
+  }
+}
+
+function reset() {
+  stopPaymentPolling();
+  Object.assign(S, {
+    view: 'home',
+    movie: null,
+    th: null,
+    time: null,
+    sel: [],
+    pending: null,
+    qty: null,
+    hold: 0,
+    hid: null,
+    srvB: null,
+    termsAccepted: false,
+    qrSvg: null,
+    approvalUrl: null
+  });
+  // Require entering mobile number on every new booking
+  S.form.phone = '';
+  S.form.email = '';
+  render();
+}
+
+function openMovie(title) {
+  S.movie = title;
+  S.th = null;
+  S.time = null;
+  S.sel = [];
+  S.form.phone = '';
+  S.form.email = '';
+  S.termsAccepted = false;
+  S.view = 'details';
+  render();
+}
+
+function pickShow(th, tm) {
+  S.th = th;
+  S.time = tm;
+  S.view = 'seats';
+  S.sel = [];
+  S.sm = null;
+  // Require fresh mobile number entry for every new seat booking
+  S.form.phone = '';
+  S.form.email = '';
+  S.termsAccepted = false;
+  loadSeats();
+  render();
+}
+
+function playChime(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    const now = ctx.currentTime;
+    if (type === 'select') {
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.08);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    } else if (type === 'checkout') {
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } else if (type === 'success') {
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.setValueAtTime(659.25, now + 0.1);
+      osc.frequency.setValueAtTime(783.99, now + 0.2);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc.start(now);
+      osc.stop(now + 0.4);
+    }
+  } catch(e) {}
+}
+
+function toggleSeat(id) {
+  if (seatStatus(id) === 'b') return;
+  S.sel = S.sel.includes(id) ? S.sel.filter(x => x !== id) : [...S.sel, id];
+  S.hold = S.sel.length ? Date.now() + 300000 : 0;
+  S.termsAccepted = false;
+  playChime('select');
+  render();
+}
+
+function applyCoupon() {
+  const code = ($('cp-input')?.value || '').trim().toUpperCase();
+  S.coupon = (code === 'VOICE10');
+  say(S.coupon ? 'Coupon VOICE10 applied! 10% discount included.' : 'That coupon is invalid. Try VOICE10.');
+  // Sync coupon with server booking if one exists
+  if (S.srvB && API) {
+    api('/bookings/' + S.srvB.bookingId + '/coupon', 'POST', { coupon: S.coupon ? 'VOICE10' : '' }).then(r => {
+      if (r.ok) { S.srvB = r.b; }
+    });
+  }
+  render();
+}
+
+function renderQrSvg(seed) {
+  let h = hash(seed);
+  let s = '';
+  for (let y = 0; y < 21; y++) {
+    for (let x = 0; x < 21; x++) {
+      h = (h * 1103515245 + 12345) >>> 0;
+      const corner = (x < 7 && y < 7) || (x > 13 && y < 7) || (x < 7 && y > 13);
+      if (corner || ((h >> 16) & 1)) {
+        s += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+      }
+    }
+  }
+  return `<svg viewBox="0 0 21 21" width="130" height="130" fill="#0f172a" style="background:#fff;padding:8px;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1)">${s}</svg>`;
+}
+
+function billRowsHtml() {
+  const breakdown = {};
+  S.sel.forEach(x => {
+    const c = cat(x[0]);
+    breakdown[c] = (breakdown[c] || 0) + 1;
+  });
+  const row = (lbl, val, style = '') => `<div class="bill-row" style="${style}"><span>${lbl}</span><span>${val}</span></div>`;
+  
+  let html = `<div style="font-weight:700;font-size:12px;color:var(--mu);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px">🎟️ Seat Booking</div>`;
+  html += Object.entries(breakdown).map(([c, n]) => row(`${c} Seats × ${n} (₹${PRICE[c]} each)`, `₹${n * PRICE[c]}`)).join('');
+  html += row('Seat Booking Subtotal', '₹' + sub(), 'font-weight:700;color:#38bdf8;padding-bottom:8px;border-bottom:1px dashed rgba(255,255,255,0.1)');
+  html += `<div style="font-weight:700;font-size:12px;color:var(--mu);margin:10px 0 6px;text-transform:uppercase;letter-spacing:0.5px">💼 Taxes & Additional Charges</div>`;
+  html += row('Convenience Fee (10%)', '+ ₹' + fee());
+  html += row('GST (18% on convenience fee)', '+ ₹' + gst());
+  if (S.coupon) html += row('Promo VOICE10 (10% off)', '− ₹' + disc(), 'color:#34d399;font-weight:700');
+  html += `<div class="bill-row bill-total"><span>Total Amount Payable</span><span>₹${total()}</span></div>`;
+  return html;
+}
+
+function downloadTicketHtml() {
+  const b = S.bk;
+  if (!b) return;
+  const doc = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Ticket ${b.id}</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;padding:30px;background:#f8fafc;color:#0f172a;display:grid;place-items:center}
+.box{background:#fff;border-radius:16px;padding:30px;max-width:540px;box-shadow:0 10px 30px rgba(0,0,0,0.1);border:1px solid #e2e8f0}
+h2{margin:0 0 8px;color:#e11d48}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+dt{font-size:12px;color:#64748b;font-weight:700}dd{margin:0;font-size:15px;font-weight:800}
+</style></head><body>
+<div class="box">
+<h2>🎬 VoiceTix Cinema Admission</h2>
+<p>Show this pass at the theater counter or scan the QR code at the turnstile.</p>
+<div class="grid">
+<div><dt>BOOKING ID</dt><dd>${b.id}</dd></div>
+<div><dt>MOVIE</dt><dd>${b.movieTitle || S.movie}</dd></div>
+<div><dt>CINEMA</dt><dd>${b.theatreName || S.th}</dd></div>
+<div><dt>DATE & TIME</dt><dd>${dl(b.date || S.date)}, ${b.time || S.time}</dd></div>
+<div><dt>SEATS</dt><dd>${(b.seats || S.sel).join(', ')}</dd></div>
+<div><dt>AMOUNT PAID</dt><dd>₹${b.paid}</dd></div>
+</div>
+<div style="text-align:center;margin-top:20px">${renderQrSvg(b.id)}<br><small>Ticket Ref: ${b.txn || 'VERIFIED'}</small></div>
+</div></body></html>`;
+  const blob = new Blob([doc], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `VoiceTix-${b.id}.html`;
+  a.click();
+}
+
+function renderContactBadgeHtml() {
+  const phone = (S.form.phone || '').trim();
+  const cleanPhone = phone.replace(/[\s-]/g, '').replace(/^(\+91|91)/, '');
+  const email = (S.form.email || '').trim();
+  const hasPhone = /^\d{10,12}$/.test(cleanPhone);
+  const hasEmail = /\S+@\S+\.\S+/.test(email);
+  if (!hasPhone && !hasEmail) {
+    return `
+      <div style="padding:10px 14px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);border-radius:8px;color:#fbbf24;font-size:13px;margin-bottom:14px">
+        ⚠️ Please enter your <b>10-digit mobile number</b> below. Your WhatsApp OTP & official ticket pass will be delivered to it.
+      </div>`;
+  }
+  return `
+    <div style="padding:10px 14px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);border-radius:8px;color:#34d399;font-size:13px;margin-bottom:14px">
+      ✅ Verification OTP & Ticket will be sent to: ${hasPhone ? '💬 <b>WhatsApp (+91 ' + cleanPhone + ')</b>' : ''}${hasPhone && hasEmail ? ' & ' : ''}${hasEmail ? '📧 <b>' + email + '</b>' : ''}
+    </div>`;
+}
+
+function updateContactBadge() {
+  const pInput = $('inp-phone');
+  const eInput = $('inp-email');
+  if (pInput) S.form.phone = pInput.value.trim();
+  if (eInput) S.form.email = eInput.value.trim();
+  const el = $('contact-badge-container');
+  if (el) el.innerHTML = renderContactBadgeHtml();
+}
+
+/* ==========================================================================
+   Full Reactive Render Function
+   ========================================================================== */
+
+function render() {
+  const currentStepIdx = STEPS.indexOf(S.view);
+  const m = S.movie && mv();
+
+  // Navigation Bar State
+  const confirmedCount = (S.mine || []).filter(b => b.bookingStatus === 'CONFIRMED').length;
+  $('nv').innerHTML = `
+    <button class="pill-btn ${S.view === 'home' ? 'active' : ''}" onclick="go('home')">🎬 Movies</button>
+    <button class="pill-btn ${S.view === 'mine' ? 'active' : ''}" onclick="openMine()">
+      🎟️ My Bookings ${confirmedCount ? `<span class="badge-count">${confirmedCount}</span>` : ''}
+    </button>
+    ${S.user ? `
+      <span class="pill-btn" onclick="userLogout()" title="Click to logout">
+        👤 ${S.user.name} ${S.user.admin ? '(Admin)' : ''} · Logout
+      </span>
+    ` : `
+      <button class="pill-btn ${S.view === 'login' ? 'active' : ''}" onclick="go('login')">👤 Login</button>
+    `}
+  `;
+
+  let out = `
+    <div class="step-bar">
+      ${STEP_LABELS.map((lbl, i) => `
+        <div class="step-item ${i === currentStepIdx ? 'active' : i < currentStepIdx ? 'done' : ''}">
+          <span>${i < currentStepIdx ? '✓' : i + 1}</span>
+          <span>${lbl}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // VIEW: HOME CATALOG
+  if (S.view === 'home') {
+    const qStr = norm(S.q || '');
+    const genres = ['All', 'Action', 'Thriller', 'Tamil', 'Hindi', 'Telugu', 'English'];
+    const featured = MOVIES[0];
+
+    const filtered = MOVIES.filter(x => {
+      const matchesQ = !qStr || (x.t + x.g + x.l).toLowerCase().includes(qStr);
+      const matchesGenre = S.genre === 'All' || x.g.includes(S.genre) || x.l === S.genre;
+      return matchesQ && matchesGenre;
+    });
+
+    out += `
+      <!-- Featured Hero Banner -->
+      <div class="hero">
+        <div class="hero-tag">🔥 NOW SHOWING IN IMAX 4K</div>
+        <h1>${featured.t}</h1>
+        <p>${featured.s}</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="openMovie('${featured.t}')">🎟️ Book Tickets</button>
+          <button class="btn btn-secondary" onclick="openMovie('${featured.t}')">ℹ️ Details & Times</button>
+        </div>
+        <div class="hero-bg-emoji">${featured.e}</div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="chips">
+        ${genres.map(g => `
+          <div class="chip ${S.genre === g ? 'active' : ''}" onclick="S.genre='${g}';render()">${g}</div>
+        `).join('')}
+      </div>
+
+      <div class="section-title">
+        <span>🎬 Currently Playing</span>
+        <span style="font-size:13px;color:var(--mu);font-weight:500">(${filtered.length} titles available)</span>
+      </div>
+
+      <div class="movie-grid">
+        ${filtered.map(x => `
+          <div class="card movie-card">
+            <div class="poster" style="background:linear-gradient(160deg, ${x.c}, #000)">
+              <div class="poster-badge">⭐ ${x.r}</div>
+              <div class="poster-lang">${x.l}</div>
+              <span>${x.e}</span>
+            </div>
+            <div class="movie-title">${x.t}</div>
+            <div class="movie-sub">${x.g} · ${x.dur}</div>
+            <div class="movie-btns">
+              <button class="btn btn-secondary" style="flex:1" onclick="openMovie('${x.t}')">Details</button>
+              <button class="btn btn-primary" style="flex:1" onclick="openMovie('${x.t}')">Book</button>
+            </div>
+          </div>
+        `).join('') || '<p style="color:var(--mu);padding:20px">No movies matched your search query.</p>'}
+      </div>
+
+      <div class="section-title">🎞️ Coming Soon</div>
+      <div class="chips">
+        <span class="chip">🐱 The Cat in the Hat · Nov 6</span>
+        <span class="chip">🦖 Godzilla Minus Zero · Nov 14</span>
+        <span class="chip">🏹 Ramayana Part 1 · Dec 20</span>
+      </div>
+    `;
+  }
+
+  // VIEW: DETAILS & SHOWTIMES
+  if (S.view === 'details') {
+    out += `
+      <div class="detail-header">
+        <div class="detail-poster" style="background:${m.c}">${m.e}</div>
+        <div class="detail-info">
+          <h2 style="font-size:28px;margin-bottom:6px">${m.t}</h2>
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+            <span class="status-tag confirmed">⭐ ${m.r} / 10 Rating</span>
+            <span class="status-tag" style="background:rgba(255,255,255,0.08);color:#fff">${m.g}</span>
+            <span class="status-tag" style="background:rgba(255,255,255,0.08);color:#fff">${m.l}</span>
+            <span class="status-tag" style="background:rgba(255,255,255,0.08);color:#fff">${m.dur}</span>
+          </div>
+          <p style="color:#cbd5e1;font-size:14px;line-height:1.6">${m.s}</p>
+        </div>
+      </div>
+
+      <div class="section-title">📅 1. Choose Date</div>
+      <div class="chips" style="margin-bottom:20px">
+        ${[0, 1, 2].map(o => `
+          <div class="chip ${S.date === o ? 'active' : ''}" onclick="S.date=${o};render()">
+            ${dl(o)}
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="section-title">🏛️ 2. Select Cinema & Showtime</div>
+      ${THEATRES.map(t => `
+        <div class="theatre-card">
+          <div class="theatre-head">
+            <div>
+              <b style="font-size:16px;color:#fff">${t}</b>
+              <div style="font-size:12px;color:var(--mu);margin-top:2px">4K Laser Dolby Atmos 7.1 · Recliner Available</div>
+            </div>
+            <span style="font-size:12px;color:#fbbf24;font-weight:700">From ₹150</span>
+          </div>
+          <div class="theatre-times">
+            ${TIMES.map(x => `
+              <button class="time-btn ${S.th === t && S.time === x ? 'active' : ''}" onclick="pickShow('${t}', '${x}')">
+                ${x}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+
+      <div style="margin-top:20px">
+        <button class="btn btn-secondary" onclick="back()">← Back to Catalog</button>
+      </div>
+    `;
+  }
+
+  // VIEW: SEAT SELECTION
+  if (S.view === 'seats') {
+    out += `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div>
+          <h2 style="font-size:22px">${S.movie}</h2>
+          <div style="font-size:13px;color:var(--mu)">${S.th} · ${dl(S.date)} · ${S.time}</div>
+        </div>
+        <button class="btn btn-secondary" onclick="back()">Change Show</button>
+      </div>
+
+      <div class="seating-wrap">
+        <div class="screen-container">
+          <div class="screen-3d"></div>
+          <div class="screen-label">CURVED CINEMA SCREEN THIS WAY</div>
+        </div>
+
+        <div class="seating-hall">
+          <div class="tier-label">👑 Recliner Luxury Tier (₹400)</div>
+          ${['F', 'E'].map(r => `
+            <div class="seat-row">
+              <span class="row-id">${r}</span>
+              ${[...Array(COLS)].map((_, k) => {
+                const id = r + (k + 1);
+                const st = seatStatus(id);
+                return `<button class="seat ${st === 'b' ? 'b' : st === 's' ? 's' : ''}" ${st === 'b' ? 'disabled' : ''} onclick="toggleSeat('${id}')" title="Seat ${id}">${k + 1}</button>`;
+              }).join('')}
+            </div>
+          `).join('')}
+
+          <div class="tier-label">⭐ Premium Center Tier (₹250)</div>
+          ${['D', 'C'].map(r => `
+            <div class="seat-row">
+              <span class="row-id">${r}</span>
+              ${[...Array(COLS)].map((_, k) => {
+                const id = r + (k + 1);
+                const st = seatStatus(id);
+                return `<button class="seat ${st === 'b' ? 'b' : st === 's' ? 's' : ''}" ${st === 'b' ? 'disabled' : ''} onclick="toggleSeat('${id}')" title="Seat ${id}">${k + 1}</button>`;
+              }).join('')}
+            </div>
+          `).join('')}
+
+          <div class="tier-label">🎟️ Regular Standard Tier (₹150)</div>
+          ${['B', 'A'].map(r => `
+            <div class="seat-row">
+              <span class="row-id">${r}</span>
+              ${[...Array(COLS)].map((_, k) => {
+                const id = r + (k + 1);
+                const st = seatStatus(id);
+                return `<button class="seat ${st === 'b' ? 'b' : st === 's' ? 's' : ''}" ${st === 'b' ? 'disabled' : ''} onclick="toggleSeat('${id}')" title="Seat ${id}">${k + 1}</button>`;
+              }).join('')}
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="seat-legend">
+          <div class="legend-item"><div class="legend-swatch" style="background:#10b981"></div> Available</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#3b82f6"></div> Selected</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#334155"></div> Reserved</div>
+        </div>
+      </div>
+
+      <!-- Live Sticky Selection Bar -->
+      <div class="checkout-bar">
+        <div>
+          <div style="font-size:12px;color:var(--mu)">SELECTED SEATS</div>
+          <div style="font-size:16px;font-weight:800;color:#fff">${S.sel.join(', ') || 'No seats selected'}</div>
+          ${S.hold && S.sel.length ? `
+            <div class="hold-timer-pill" style="margin-top:4px" id="hold-display">
+              ⏱️ Hold: 5:00
+            </div>
+          ` : ''}
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--mu);font-weight:700">SEAT BOOKING TOTAL</div>
+          <div style="font-size:22px;font-weight:800;color:#38bdf8">₹${sub()}</div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px">+ ₹${fee() + gst()} (Fee & GST added at payment)</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn btn-secondary" ${S.sel.length ? '' : 'disabled'} onclick="toBook()" style="padding:9px 12px">
+            Review Details
+          </button>
+          <button class="btn btn-primary" ${S.sel.length ? '' : 'disabled'} onclick="goPay()">
+            💳 Proceed to Payment (${S.sel.length}) →
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // VIEW: BOOKING DETAILS REVIEW
+  if (S.view === 'book') {
+    out += `
+      <div class="card" style="max-width:540px;margin:20px auto;padding:24px">
+        <h2 style="font-size:22px;margin-bottom:16px">📋 Review & Contact Details</h2>
+        <div id="contact-badge-container">
+          ${renderContactBadgeHtml()}
+        </div>
+        <label class="input-label">Your Name</label>
+        <input class="f-input" id="inp-name" value="${S.form.name}" placeholder="Enter your full name" oninput="S.form.name=this.value">
+        <label class="input-label">📱 Mobile Number <span style="color:#fbbf24">(enter to get SMS ticket pass)</span></label>
+        <input class="f-input" id="inp-phone" type="tel" value="${S.form.phone}" placeholder="10-digit mobile number, e.g. 9876543210" oninput="updateContactBadge()">
+        <label class="input-label">📧 Email Address <span style="color:#94a3b8">(enter to get email e-ticket)</span></label>
+        <input class="f-input" id="inp-email" type="email" value="${S.form.email}" placeholder="you@example.com" oninput="updateContactBadge()">
+
+        <div class="bill-box">
+          <div style="font-weight:700;margin-bottom:6px;color:#fff">${S.movie} · ${S.th}</div>
+          <div style="color:var(--mu);margin-bottom:8px">${dl(S.date)} at ${S.time} · Seats ${S.sel.join(', ')} (${S.sel.length} tickets)</div>
+          ${billRowsHtml()}
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:16px">
+          <button class="btn btn-secondary" onclick="back()">← Change Seats</button>
+          <button class="btn btn-primary" onclick="goPay()">💳 Proceed to Payment →</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // VIEW: PAYMENT AUTHORIZATION
+  if (S.view === 'pay') {
+    const ps = S.pstep;
+    out += `
+      <div class="card" style="max-width:580px;margin:20px auto;padding:26px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="font-size:22px">Complete Your Payment</h2>
+          <span class="status-tag pending">🔒 Secure Checkout</span>
+        </div>
+        <p style="font-size:13px;color:var(--mu);margin-bottom:14px">
+          Ref: <b>${S.srvB ? S.srvB.bookingId : S.ref}</b> · ${S.movie} · ${S.th} · Seats ${S.sel.join(', ')}
+        </p>
+
+        ${ps === 0 ? `
+          <div class="bill-box">${billRowsHtml()}</div>
+          <div style="display:flex;gap:8px;margin:12px 0">
+            <input class="f-input" id="cp-input" placeholder="Promo code (Try VOICE10)" style="margin:0">
+            <button class="btn btn-secondary" onclick="applyCoupon()">Apply</button>
+          </div>
+
+          <label class="input-label">Select Payment Method</label>
+          <div class="payment-methods">
+            ${[
+              ['UPI (GPay / PhonePe)', '📱'],
+              ['Credit / Debit Card', '💳'],
+              ['Net Banking', '🏦'],
+              ['Cinema Wallet', '👛']
+            ].map(([x, icon]) => `
+              <div class="pm-card ${S.pm === x ? 'active' : ''}" onclick="S.pm='${x}';render()">
+                <span style="font-size:24px">${icon}</span>
+                <div>
+                  <div style="font-size:13px;font-weight:700">${x}</div>
+                  <div style="font-size:11px;color:#34d399">✓ Instant Verified Gateway</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Terms & Conditions of processing payment before scanning -->
+          <div style="background:${S.termsAccepted ? 'rgba(16,185,129,0.08)' : 'rgba(255,255,255,0.03)'};border:1px solid ${S.termsAccepted ? '#10b981' : 'rgba(255,255,255,0.14)'};border-radius:12px;padding:14px;margin:16px 0 12px;transition:all 0.2s">
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin:0">
+              <input type="checkbox" id="terms-chk" style="width:18px;height:18px;margin-top:2px;accent-color:#10b981;cursor:pointer" ${S.termsAccepted ? 'checked' : ''} onchange="S.termsAccepted=this.checked;render()">
+              <div style="font-size:13px;line-height:1.5;color:#e2e8f0">
+                <span>I confirm my selected seats and agree to the <a href="javascript:void(0)" onclick="openTermsModal();event.stopPropagation()" style="color:#38bdf8;text-decoration:underline;font-weight:700">Terms & Conditions</a> and <a href="javascript:void(0)" onclick="openTermsModal();event.stopPropagation()" style="color:#38bdf8;text-decoration:underline;font-weight:700">Cancellation Policy</a> to proceed with payment.</span>
+                <div style="font-size:11px;color:#94a3b8;margin-top:4px;display:flex;align-items:center;gap:6px">
+                  <span>📱</span>
+                  <span>Scan QR code with your phone camera to approve payment of ₹${total()} and confirm your admission ticket.</span>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          ${S.status === 'failed' ? `
+            <div style="padding:12px;border-radius:8px;background:rgba(239,68,68,0.15);color:#fca5a5;font-size:13px;margin-bottom:12px">
+              ❌ Payment was declined or cancelled on your phone. Your seats are still held. You can retry safely.
+            </div>
+          ` : ''}
+
+          <div style="display:flex;justify-content:space-between;margin-top:16px">
+            <button class="btn btn-secondary" onclick="back()">Cancel</button>
+            <button class="btn btn-primary" onclick="startPay()" style="${!S.termsAccepted ? 'opacity:0.9;' : 'box-shadow:0 0 16px rgba(16,185,129,0.35);'}">
+              ${S.termsAccepted ? '✓' : '🔒'} Pay ₹${total()} with ${S.pm} →
+            </button>
+          </div>
+        ` : ''}
+
+        ${ps === 1 ? `
+          <div style="text-align:center;padding:16px 10px">
+            <div style="font-size:40px;margin-bottom:6px">📱</div>
+            <h3 style="font-size:22px;margin-bottom:6px;color:#fff">Scan QR Code with Your Phone</h3>
+            <p style="font-size:13px;color:var(--mu);max-width:460px;margin:0 auto 16px;line-height:1.5">
+              Open your mobile phone camera or scanner. Scan the QR code below to view payment details and tap <b>APPROVE</b> or <b>DECLINE</b> on your phone.
+            </p>
+
+            <!-- Real High-Contrast Scannable QR Code -->
+            <div style="background:#fff;padding:16px;border-radius:20px;display:inline-block;box-shadow:0 15px 40px rgba(0,0,0,0.6);margin:0 auto 16px;border:3px solid #38bdf8">
+              ${S.qrSvg ? S.qrSvg : renderQrSvg(S.approvalUrl || S.pid)}
+            </div>
+
+            <div style="margin-bottom:14px">
+              <span style="font-size:13px;color:var(--mu);margin-right:6px">Total Amount to Authorize:</span>
+              <span style="font-size:26px;font-weight:900;color:#38bdf8">₹${total()}</span>
+            </div>
+
+            <!-- Live Status Pulse -->
+            <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:14px;padding:14px 18px;max-width:460px;margin:0 auto 16px;font-size:12px;color:#cbd5e1;line-height:1.5;display:flex;align-items:center;gap:12px;text-align:left">
+              <span style="display:inline-block;width:10px;height:10px;background:#38bdf8;border-radius:50%;box-shadow:0 0 10px #38bdf8;animation:pulse 1.5s infinite"></span>
+              <div>
+                <b style="color:#38bdf8">Waiting for your phone response...</b>
+                <div style="font-size:11px;color:#94a3b8;margin-top:2px">Tap Approve or Decline on your mobile screen. This screen will automatically update and issue your ticket pass!</div>
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px">
+              <a href="${S.approvalUrl || ('/approve/' + S.pid)}" target="_blank" class="pill-btn" style="text-decoration:none;font-size:12px;padding:7px 16px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#38bdf8;display:inline-flex;align-items:center;gap:6px">
+                <span>📲 Open Phone Authorization Screen Directly</span>
+                <span style="font-size:12px">↗</span>
+              </a>
+            </div>
+
+            <div style="display:flex;justify-content:center;gap:10px;margin-top:8px">
+              <button class="btn btn-secondary" onclick="cancelPayment()">← Cancel Payment</button>
+            </div>
+          </div>
+        ` : ''}
+
+        ${ps === 2 ? `
+          <div style="text-align:center;padding:36px 10px">
+            <div style="width:40px;height:40px;border:4px solid rgba(255,255,255,0.1);border-top-color:var(--ac);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px"></div>
+            <h3 style="font-size:18px">Verifying payment with banking provider...</h3>
+            <p style="font-size:13px;color:var(--mu)">Please do not refresh the page.</p>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  // VIEW: CONFIRMATION & DIGITAL TICKET
+  if (S.view === 'done') {
+    const b = S.bk;
+    out += `
+      <div style="text-align:center;margin-bottom:20px">
+        <span class="status-tag confirmed" style="font-size:14px;padding:6px 14px">✓ Payment Verified · Booking Confirmed</span>
+        <h1 style="font-size:32px;margin-top:10px">You're Going to the Movies!</h1>
+      </div>
+
+      <div class="ticket-wrapper">
+        <div class="ticket-main">
+          <div class="ticket-header-strip">
+            <div style="font-size:11px;font-weight:800;letter-spacing:1px;opacity:0.85">VOICETIX AI · OFFICIAL DIGITAL TICKET</div>
+            <h2 style="margin:4px 0 0;font-size:24px">${m ? m.e : '🎬'} ${b.movieTitle || S.movie}</h2>
+          </div>
+          <div class="ticket-grid">
+            <div class="t-field"><dt>Booking Ref</dt><dd>${b.id}</dd></div>
+            <div class="t-field"><dt>Transaction</dt><dd>${b.txn || 'DEMO-TXN'}</dd></div>
+            <div class="t-field"><dt>Cinema Hall</dt><dd>${b.theatreName || S.th}</dd></div>
+            <div class="t-field"><dt>Date & Time</dt><dd>${dl(b.date || S.date)}, ${b.time || S.time}</dd></div>
+            <div class="t-field"><dt>Seats (${(b.seats || S.sel).length})</dt><dd>${(b.seats || S.sel).join(', ')}</dd></div>
+            <div class="t-field"><dt>Amount Paid</dt><dd>₹${b.paid} (PAID)</dd></div>
+            <div class="t-field"><dt>Attendee</dt><dd>${S.form.name}</dd></div>
+            <div class="t-field"><dt>Payment Type</dt><dd>${b.method}</dd></div>
+          </div>
+        </div>
+        <div class="ticket-stub">
+          ${renderQrSvg(b.id)}
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-top:8px">GATE SCAN QR</div>
+          <div style="font-size:12px;font-weight:800;color:#0f172a;margin-top:4px">${b.id}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:center;gap:12px;margin-top:24px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="downloadTicketHtml()">⬇️ Download Digital Ticket</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Ticket</button>
+        <button class="btn btn-secondary" onclick="openMine()">📋 View in My Bookings</button>
+        <button class="btn btn-secondary" onclick="reset()">🏠 Return Home</button>
+      </div>
+
+      <!-- Ticket Delivery to Mobile / Email Section -->
+      ${(() => {
+        const phone = S.form.phone || S.bk?.customerDetails?.phone || '';
+        const cleanPhone = String(phone).replace(/[\s-]/g, '');
+        const hasPhone = /^\+?\d{10,13}$/.test(cleanPhone);
+        const email = S.form.email || S.bk?.customerDetails?.email || '';
+        const hasEmail = /\S+@\S+\.\S+/.test(email);
+        const passUrl = window.location.origin + '/api/tickets/' + b.id;
+        const smsText = `VoiceTix Cinema Pass: Booking ${b.id} for "${b.movieTitle || S.movie}" is CONFIRMED! Showtime: ${b.time}, Seats: ${(b.seats || S.sel).join(', ')}. Pass link: ${passUrl}`;
+
+        return `
+          <div style="margin:24px auto;max-width:680px;background:rgba(15,23,42,0.85);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:20px;box-shadow:0 12px 30px rgba(0,0,0,0.5)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:10px">
+              <span style="font-weight:800;font-size:15px;color:#fff">📬 Ticket Delivery & Mobile Pass</span>
+              <span class="status-tag confirmed">✓ Dispatched</span>
+            </div>
+
+            ${hasPhone ? `
+              <div style="background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.35);border-radius:14px;padding:16px;margin-bottom:14px">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                  <span style="font-size:26px">💬</span>
+                  <div>
+                    <div style="font-weight:800;color:#25D366;font-size:15px">Official Ticket Pass Sent to WhatsApp</div>
+                    <div style="font-size:12px;color:#cbd5e1">Recipient: <b>+91 ${cleanPhone.replace(/^(\+91|91)/, '')}</b></div>
+                  </div>
+                  <span style="margin-left:auto;background:#25D366;color:#052e16;font-size:10px;font-weight:800;padding:3px 8px;border-radius:12px">✓ DISPATCHED</span>
+                </div>
+                <div style="background:rgba(0,0,0,0.35);border-radius:8px;padding:10px 12px;font-size:12px;color:#94a3b8;font-family:var(--font-mono);line-height:1.5;margin-bottom:12px">
+                  💬 "${smsText}"
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <a href="https://api.whatsapp.com/send?phone=91${cleanPhone.replace(/^(\+91|91)/, '')}&text=${encodeURIComponent(smsText)}" target="_blank" class="btn" style="background:#25D366;color:#052e16;font-weight:800;font-size:13px;padding:9px 16px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(37,211,102,0.3)">
+                    <span>💬 Open Ticket in WhatsApp App</span>
+                    <span style="font-size:12px">↗</span>
+                  </a>
+                  <a href="sms:${cleanPhone}?body=${encodeURIComponent(smsText)}" class="btn btn-secondary" style="font-size:12px;padding:8px 14px;text-decoration:none">
+                    📱 Open via SMS
+                  </a>
+                  <button class="btn btn-secondary" style="font-size:12px;padding:8px 14px" onclick="shareTicket('${b.id}')">
+                    📤 Share Ticket
+                  </button>
+                  <a href="/api/tickets/${b.id}" target="_blank" class="btn btn-secondary" style="font-size:12px;padding:8px 14px;text-decoration:none">
+                    🎫 Open Gate Mobile Pass
+                  </a>
+                </div>
+              </div>
+            ` : ''}
+
+            ${hasEmail ? `
+              <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:12px;padding:14px;margin-bottom:12px">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span style="font-size:22px">📧</span>
+                  <div>
+                    <div style="font-weight:800;color:#60a5fa;font-size:14px">Email Confirmation Dispatched</div>
+                    <div style="font-size:12px;color:#cbd5e1">Recipient: <b>${email}</b></div>
+                    <div style="font-size:12px;color:#94a3b8;margin-top:2px">Official digital ticket receipt and QR entry pass sent to your inbox.</div>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px">
+              <span style="font-size:12px;color:var(--mu)">Need ticket sent again?</span>
+              <button class="btn btn-secondary" style="font-size:12px;padding:6px 14px" onclick="resendTicket()">
+                🔄 Resend Ticket (SMS / Email)
+              </button>
+            </div>
+          </div>
+        `;
+      })()}
+    `;
+  }
+
+  // VIEW: MY BOOKINGS LIST
+  if (S.view === 'mine') {
+    const list = Array.isArray(S.mine) ? S.mine : [];
+    const filterTab = S.mineTab || 'ALL';
+    const filteredList = list.filter(b => {
+      if (filterTab === 'ALL') return true;
+      if (filterTab === 'CONFIRMED') return b.bookingStatus === 'CONFIRMED';
+      if (filterTab === 'CANCELLED') return b.bookingStatus === 'CANCELLED';
+      if (filterTab === 'PENDING') return b.bookingStatus === 'PENDING_PAYMENT';
+      return true;
+    });
+
+    out += `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+        <div>
+          <h1 style="font-size:28px">🎟️ My Bookings</h1>
+          <p style="color:var(--mu);font-size:14px">Your confirmed cinema admissions and reservation history.</p>
+        </div>
+        <button class="btn btn-primary" onclick="go('home')">🎬 Book New Tickets</button>
+      </div>
+
+      <div class="mine-tabs">
+        <button class="pill-btn ${filterTab === 'ALL' ? 'active' : ''}" onclick="S.mineTab='ALL';render()">
+          All (${list.length})
+        </button>
+        <button class="pill-btn ${filterTab === 'CONFIRMED' ? 'active' : ''}" onclick="S.mineTab='CONFIRMED';render()">
+          Confirmed (${list.filter(x => x.bookingStatus === 'CONFIRMED').length})
+        </button>
+        <button class="pill-btn ${filterTab === 'CANCELLED' ? 'active' : ''}" onclick="S.mineTab='CANCELLED';render()">
+          Cancelled (${list.filter(x => x.bookingStatus === 'CANCELLED').length})
+        </button>
+      </div>
+
+      ${filteredList.length === 0 ? `
+        <div class="card" style="text-align:center;padding:48px 20px">
+          <div style="font-size:56px;margin-bottom:12px">🎟️</div>
+          <h3 style="font-size:20px;margin-bottom:6px">No Bookings Found</h3>
+          <p style="color:var(--mu);max-width:380px;margin:0 auto 20px">
+            You don't have any bookings in this section yet. Tap below or say "Book tickets for Jailer" to start.
+          </p>
+          <button class="btn btn-primary" onclick="go('home')">Explore Now Showing</button>
+        </div>
+      ` : `
+        <div>
+          ${filteredList.map(b => {
+            const mTitle = b.movieTitle || (MOVIES.find(m => m.t === b.movieId || 'm' + MOVIES.indexOf(m) === b.movieId) || {}).t || b.movieId || 'Cinema Movie';
+            const tName = b.theatreName || THEATRES[+b.theatreId?.slice(1)] || b.theatreId || 'Cinema Hall';
+            const mov = MOVIES.find(m => m.t === mTitle) || { e: '🎬' };
+            const isConfirmed = b.bookingStatus === 'CONFIRMED';
+
+            return `
+              <div class="booking-item-card">
+                <div style="display:flex;align-items:center;gap:16px">
+                  <div style="font-size:36px;width:52px;height:52px;background:rgba(255,255,255,0.06);border-radius:10px;display:grid;place-items:center">
+                    ${mov.e}
+                  </div>
+                  <div>
+                    <div style="font-size:18px;font-weight:800;color:#fff">${mTitle}</div>
+                    <div style="font-size:13px;color:var(--mu)">
+                      ${tName} · ${b.startTime || 'Standard'} · Seats: <b>${(b.seatNumbers || []).join(', ')}</b>
+                    </div>
+                    <div style="font-size:12px;color:#cbd5e1;margin-top:2px">
+                      Booking ID: <span style="font-family:var(--font-mono)">${b.bookingId}</span> · Total Paid: <b style="color:#34d399">₹${b.totalAmount}</b>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap">
+                  <span class="status-tag ${isConfirmed ? 'confirmed' : b.bookingStatus === 'CANCELLED' ? 'cancelled' : 'pending'}">
+                    ${b.bookingStatus}
+                  </span>
+                  ${isConfirmed ? `
+                    <button class="btn btn-secondary" onclick="showTicketModal('${b.bookingId}')">
+                      🎫 View Ticket
+                    </button>
+                    <button class="btn btn-danger" style="padding:8px 12px;font-size:12px" onclick="cancelBooking('${b.bookingId}')">
+                      Cancel
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `}
+    `;
+  }
+
+  // VIEW: USER LOGIN
+  if (S.view === 'login') {
+    out += `
+      <div class="card" style="max-width:420px;margin:30px auto;padding:28px">
+        <h2 style="font-size:22px;margin-bottom:8px">Login or Register</h2>
+        <p style="font-size:13px;color:var(--mu);margin-bottom:18px">
+          Sign in to sync your bookings across devices. Enter "admin" for administrator tools.
+        </p>
+        <label class="input-label">Username</label>
+        <input class="f-input" id="un-input" placeholder="e.g. alice, kailash, or admin">
+        <label class="input-label">Display Name</label>
+        <input class="f-input" id="dn-input" placeholder="Your Full Name">
+        <div style="display:flex;justify-content:space-between;margin-top:16px">
+          <button class="btn btn-secondary" onclick="back()">Cancel</button>
+          <button class="btn btn-primary" onclick="userLogin()">Continue →</button>
+        </div>
+      </div>
+    `;
+  }
+
+  $('app').innerHTML = out;
+  updateVoiceHints();
+}
+
+// Seat hold countdown tick
+setInterval(() => {
+  if (S.hold && S.sel.length) {
+    const sec = Math.ceil((S.hold - Date.now()) / 1000);
+    const holdEl = $('hold-display');
+    if (sec <= 0 && S.view !== 'done') {
+      S.sel = [];
+      S.hold = 0;
+      if (S.view === 'seats' || S.view === 'book') {
+        S.view = 'seats';
+        render();
+      }
+      say('Your seat reservation expired and the seats were released.');
+    } else {
+      const minStr = Math.floor(sec / 60);
+      const secStr = String(sec % 60).padStart(2, '0');
+      if (holdEl) holdEl.textContent = `⏱️ Hold: ${minStr}:${secStr}`;
+    }
+  }
+}, 1000);
+
+// Detect live server
+fetch('/api/movies').then(r => r.ok ? r.json() : Promise.reject()).then(() => {
+  API = true;
+  ensureAuthSession();
+  render();
+}).catch(() => {
+  API = false;
+  render();
+});
+
+// Initial boot
+render();
+checkAudioInputDevices();
+say('Hello! I am VoiceTix, your cinema booking assistant. How can I help you today?', false);
+</script>
+</body>
+</html>
