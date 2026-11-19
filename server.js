@@ -1,6 +1,6 @@
 require('dotenv').config();
-const express = require('express'), cors = require('cors'), rateLimit = require('express-rate-limit'), crypto = require('crypto'), QRCode = require('qrcode'), os = require('os');
-const app = express(); app.use(cors({ origin: process.env.CORS_ORIGIN || true }), express.json({ limit: '50kb' }), express.static('public'));
+const express = require('express'), cors = require('cors'), rateLimit = require('express-rate-limit'), crypto = require('crypto'), QRCode = require('qrcode'), os = require('os'), path = require('path');
+const app = express(); app.use(cors({ origin: process.env.CORS_ORIGIN || true }), express.json({ limit: '50kb' }), express.static(path.join(__dirname, 'public')), express.static('public'));
 const SECRET = process.env.PAYMENT_SECRET || 'dev-secret', HOLD_MS = (+process.env.HOLD_SECONDS || 300) * 1000;
 const uid = p => p + crypto.randomBytes(4).toString('hex').toUpperCase();
 const sign = s => crypto.createHmac('sha256', SECRET).update(s).digest('hex');
@@ -84,10 +84,14 @@ app.post('/api/payments/initiate', auth, limiter, async (q, r) => {
     const p = { paymentId: uid('PAY'), bookingId: b.bookingId, amount: b.totalAmount, currency: 'INR', provider: 'QR_AUTH', providerTransactionId: null, paymentStatus: 'PENDING', createdAt: new Date().toISOString() };
     DB.payments.set(p.paymentId, p);
     const lanIp = getLanIp();
-    const reqHost = q.headers.host ? q.headers.host.split(':')[0] : lanIp;
-    const port = (q.headers.host && q.headers.host.includes(':')) ? q.headers.host.split(':')[1] : (process.env.PORT || 3000);
-    const targetHost = (reqHost === 'localhost' || reqHost === '127.0.0.1') ? `${lanIp}:${port}` : `${reqHost}:${port}`;
-    const approvalUrl = `http://${targetHost}/approve/${p.paymentId}`;
+    const isVercel = !!process.env.VERCEL;
+    const proto = q.headers['x-forwarded-proto'] || (isVercel ? 'https' : 'http');
+    let approvalHost = q.headers.host || `${lanIp}:3000`;
+    if (approvalHost.startsWith('localhost') || approvalHost.startsWith('127.0.0.1')) {
+        const port = approvalHost.includes(':') ? approvalHost.split(':')[1] : (process.env.PORT || 3000);
+        approvalHost = `${lanIp}:${port}`;
+    }
+    const approvalUrl = `${proto}://${approvalHost}/approve/${p.paymentId}`;
     let qrSvg = '';
     try {
         qrSvg = await QRCode.toString(approvalUrl, { type: 'svg', margin: 1, width: 220 });
@@ -123,8 +127,11 @@ app.post('/api/approve/:pid', (q, r) => {
     const p = DB.payments.get(q.params.pid);
     if (!p) return r.status(404).json({ error: 'payment not found' });
     if (p.paymentStatus !== 'PENDING') return r.json({ status: p.paymentStatus, message: 'already processed' });
+    const isVercel = !!process.env.VERCEL;
+    const proto = q.headers['x-forwarded-proto'] || (isVercel ? 'https' : 'http');
+    const baseUrl = `${proto}://${q.headers.host || 'localhost:3000'}`;
     const st = q.body.approve ? 'SUCCESS' : 'FAILED';
-    const out = verify(p.paymentId, st, sign(p.paymentId + st));
+    const out = verify(p.paymentId, st, sign(p.paymentId + st), baseUrl);
     r.status(out.code).json(out);
 });
 app.get('/approve/:pid', (q, r) => {
@@ -225,7 +232,7 @@ app.get('/approve/:pid', (q, r) => {
 </body>
 </html>`);
 });
-function verify(pid, status, sig) {
+function verify(pid, status, sig, baseUrl) {
     const p = DB.payments.get(pid); if (!p || p.paymentStatus !== 'PENDING') return { code: 409, error: 'payment not pending' };
     if (sig !== sign(pid + status)) return { code: 400, error: 'bad signature' }; const b = DB.bookings.get(p.bookingId), h = DB.holds.get(b.holdId);
     if (status !== 'SUCCESS') { p.paymentStatus = 'FAILED'; return { code: 200, payment: p, booking: b } }
@@ -235,12 +242,13 @@ function verify(pid, status, sig) {
     const hasE = /\S+@\S+\.\S+/.test(b.customerDetails?.email || '');
     const cleanP = String(b.customerDetails?.phone || '').replace(/[\s-]/g, '');
     const hasP = /^\+?\d{10,13}$/.test(cleanP);
+    const passBase = baseUrl || process.env.BASE_URL || 'http://localhost:3000';
     b.notification = {
         smsSent: hasP,
         whatsappSent: hasP,
         emailSent: hasE,
         recipient: hasP ? cleanP : b.customerDetails?.email,
-        smsMessage: hasP ? `VoiceTix Cinema: Booking ${b.bookingId} for "${b.movieTitle || 'Movie'}" is CONFIRMED! Showtime: ${b.startTime}, Seats: ${b.seatNumbers.join(', ')}. Pass link: http://localhost:3000/api/tickets/${b.bookingId}` : null,
+        smsMessage: hasP ? `VoiceTix Cinema: Booking ${b.bookingId} for "${b.movieTitle || 'Movie'}" is CONFIRMED! Showtime: ${b.startTime}, Seats: ${b.seatNumbers.join(', ')}. Pass link: ${passBase}/api/tickets/${b.bookingId}` : null,
         emailSubject: hasE ? `Confirmed: Your VoiceTix admission for ${b.movieTitle || 'Movie'}` : null,
         sentAt: new Date().toISOString()
     };
@@ -249,7 +257,7 @@ function verify(pid, status, sig) {
         console.log(`\n============================================================`);
         console.log(`[WHATSAPP TICKET DISPATCHED TO MOBILE]`);
         console.log(`WhatsApp Mobile : +91 ${rawP}`);
-        console.log(`Ticket Pass Link: http://localhost:3000/api/tickets/${b.bookingId}`);
+        console.log(`Ticket Pass Link: ${passBase}/api/tickets/${b.bookingId}`);
         console.log(`Direct WA Link  : https://api.whatsapp.com/send?phone=91${rawP}&text=${encodeURIComponent(b.notification.smsMessage)}`);
         console.log(`============================================================\n`);
         console.log(`[SMS DISPATCHED] To: ${cleanP} | Msg: ${b.notification.smsMessage}`);
@@ -260,7 +268,10 @@ function verify(pid, status, sig) {
 // Stand-in for the payment provider's redirect/webhook. The USER triggers this manually after authorizing on the demo bank screen.
 app.post('/api/demo-gateway/:pid/complete', auth, (q, r) => {
     const p = DB.payments.get(q.params.pid); if (!p || DB.bookings.get(p.bookingId).userId !== q.user.uid) return r.status(404).json({ error: 'not found' });
-    const st = q.body.approve ? 'SUCCESS' : 'FAILED', out = verify(p.paymentId, st, sign(p.paymentId + st)); r.status(out.code).json(out)
+    const isVercel = !!process.env.VERCEL;
+    const proto = q.headers['x-forwarded-proto'] || (isVercel ? 'https' : 'http');
+    const baseUrl = `${proto}://${q.headers.host || 'localhost:3000'}`;
+    const st = q.body.approve ? 'SUCCESS' : 'FAILED', out = verify(p.paymentId, st, sign(p.paymentId + st), baseUrl); r.status(out.code).json(out)
 });
 app.get('/api/tickets/:id', (q, r) => {
     const b = DB.bookings.get(q.params.id); if (!b) return r.status(404).send('<h2>Ticket not found</h2>');
